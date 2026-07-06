@@ -1,0 +1,31 @@
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 20px 64px;
+}
+
+.app-header {
+  text-align: center;
+  padding: 24px 0 28px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+}
+
+.app-header h1 {
+  margin: 0 0 8px;
+}
+
+.tagline {
+  color: var(--text);
+  margin: 0;
+}
+
+.app-main {
+  min-height: 40vh;
+}
+
+.placeholder {
+  text-align: center;
+  color: var(--text);
+  padding: 56px 0;
+}
