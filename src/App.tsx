@@ -1,27 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import type { Movie } from './types'
 import AddMovieForm from './AddMovieForm'
 import './App.css'
 
 function App() {
-  const [movies, setMovies] = useState<Movie[]>(() => {
-    try {
-      const saved = localStorage.getItem('cineshelf_movies')
-      return saved ? JSON.parse(saved) : []
-    } catch (error) {
-      console.error('Error loading movies from localStorage:', error)
-      return []
-    }
-  })
+  const [movies, setMovies] = useState<Movie[]>([])
   const [showForm, setShowForm] = useState(false)
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('cineshelf_movies', JSON.stringify(movies))
-    } catch (error) {
-      console.error('Error saving movies to localStorage:', error)
-    }
-  }, [movies])
 
   const toggleFavorite = (id: string) => {
     setMovies((prevMovies) =>
