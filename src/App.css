@@ -162,3 +162,19 @@
 .star-picker button:hover {
   transform: scale(1.12);
 }
+
+/* ---------- MOVIE LIST (minimal — PR 2 gets cards) ---------- */
+.movie-list-minimal {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+}
+.movie-list-minimal li {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--text-h);
+}
+.movie-list-minimal li:last-child {
+  border-bottom: none;
+}

@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import type { Movie } from './types'
 import AddMovieForm from './AddMovieForm'
 import './App.css'
 
 function App() {
+  const [movies, setMovies] = useState<Movie[]>([])
   const [showForm, setShowForm] = useState(false)
 
   return (
@@ -21,11 +23,19 @@ function App() {
           <div className="modal-overlay" onClick={() => setShowForm(false)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <AddMovieForm
-                onAdd={() => {}}
+                onAdd={(movie) => setMovies((prev) => [...prev, movie])}
                 onClose={() => setShowForm(false)}
               />
             </div>
           </div>
+        )}
+
+        {movies.length > 0 && (
+          <ul className="movie-list-minimal">
+            {movies.map((m) => (
+              <li key={m.id}>{m.title}</li>
+            ))}
+          </ul>
         )}
       </main>
     </div>
