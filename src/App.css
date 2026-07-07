@@ -174,7 +174,29 @@
   border-bottom: 1px solid var(--border);
   font-size: 14px;
   color: var(--text-h);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .movie-list-minimal li:last-child {
   border-bottom: none;
+}
+.favorite-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 150ms ease, color 150ms ease;
+}
+.favorite-btn:hover {
+  transform: scale(1.2);
+}
+.favorite-btn.is-favorite {
+  color: #ff4b4b;
 }

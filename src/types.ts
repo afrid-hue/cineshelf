@@ -22,4 +22,5 @@ export interface Movie {
   genre: string
   rating: number // 1–5; 0 means "not rated yet"
   status: Status
+  favorite?: boolean // Mubashira — favorites toggle
 }
