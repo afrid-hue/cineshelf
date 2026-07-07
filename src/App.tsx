@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Movie } from './types'
 import AddMovieForm from './AddMovieForm'
+import StarRating from './StarRating'
 import './App.css'
 
 function App() {
@@ -33,7 +34,17 @@ function App() {
         {movies.length > 0 && (
           <ul className="movie-list-minimal">
             {movies.map((m) => (
-              <li key={m.id}>{m.title}</li>
+              <li key={m.id}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span>{m.title}</span>
+                  <StarRating
+                    rating={m.rating}
+                    onRate={(r) =>
+                      setMovies((prev) => prev.map((movie) => (movie.id === m.id ? { ...movie, rating: r } : movie)))
+                    }
+                  />
+                </div>
+              </li>
             ))}
           </ul>
         )}
