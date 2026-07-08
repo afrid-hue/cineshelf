@@ -188,14 +188,18 @@
   transform: scale(1.12);
 }
 
-<<<<<<< HEAD
-/* ---------- MOVIE LIST ---------- */
+/* ---------- MOVIE LAYOUT ---------- */
 .movie-layout {
   display: grid;
   grid-template-columns: minmax(240px, 1fr) minmax(280px, 1.1fr);
   gap: 16px;
   margin-top: 24px;
   align-items: start;
+}
+
+.movie-list-container {
+  display: flex;
+  flex-direction: column;
 }
 
 .movie-list-minimal {
@@ -223,7 +227,21 @@
 
 .movie-list-minimal li:last-child {
   border-bottom: none;
-=======
+}
+
+.movie-list-minimal li:hover,
+.movie-list-minimal li.selected {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.movie-meta {
+  color: var(--text);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
 /* ---------- EMPTY STATE ---------- */
 .empty-state {
   text-align: center;
@@ -241,6 +259,7 @@
   flex-direction: column;
   gap: 12px;
 }
+
 .movie-card {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -248,9 +267,11 @@
   padding: 18px 20px;
   transition: border-color 150ms ease;
 }
+
 .movie-card:hover {
   border-color: var(--accent);
 }
+
 .card-top {
   display: flex;
   align-items: center;
@@ -258,6 +279,7 @@
   gap: 12px;
   margin-bottom: 10px;
 }
+
 .card-title {
   font-size: 20px;
   font-weight: 600;
@@ -265,6 +287,7 @@
   color: var(--text-h);
   line-height: 1.2;
 }
+
 .status-badge {
   font-size: 11px;
   font-weight: 600;
@@ -274,36 +297,44 @@
   border-radius: 100px;
   white-space: nowrap;
 }
+
 .status-badge.watched {
   background: var(--card-green-bg);
   color: var(--card-green);
 }
+
 .status-badge.towatch {
   background: var(--accent-bg);
   color: var(--accent);
 }
+
 .card-meta {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
+
 .card-genre {
   font-size: 13px;
   color: var(--text);
 }
+
 .card-stars {
   display: flex;
   gap: 2px;
   font-size: 16px;
   line-height: 1;
 }
+
 .card-stars .star {
   color: var(--border);
 }
+
 .card-stars .star.filled {
   color: var(--accent);
 }
+
 .favorite-btn {
   background: none;
   border: none;
@@ -317,9 +348,11 @@
   justify-content: center;
   transition: transform 150ms ease, color 150ms ease;
 }
+
 .favorite-btn:hover {
   transform: scale(1.2);
 }
+
 .favorite-btn.is-favorite {
   color: #ff4b4b;
 }
@@ -338,10 +371,12 @@
   margin-bottom: 16px;
   transition: border-color 150ms ease;
 }
+
 .search-input:focus {
   outline: none;
   border-color: var(--accent);
 }
+
 .search-input::placeholder {
   color: var(--text);
   opacity: 0.6;
@@ -353,20 +388,6 @@
   color: var(--text);
   font-size: 14px;
   margin-top: 24px;
->>>>>>> origin/main
-}
-
-.movie-list-minimal li:hover,
-.movie-list-minimal li.selected {
-  background: var(--accent-bg);
-  color: var(--accent);
-}
-
-.movie-meta {
-  color: var(--text);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
 }
 
 /* ---------- DETAIL PANEL ---------- */
