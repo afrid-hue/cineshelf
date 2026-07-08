@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Movie } from './types'
 import AddMovieForm from './AddMovieForm'
+import SummaryBar from './SummaryBar'
 import MovieDetail from './MovieDetail'
 import StarRating from './StarRating'
 import './App.css'
@@ -53,6 +54,8 @@ function App() {
             </div>
           </div>
         )}
+
+        <SummaryBar movies={movies} />
 
         {movies.length === 0 ? (
           <p className="empty-state">No movies yet — add one to get started!</p>
