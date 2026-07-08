@@ -1,15 +1,11 @@
 .app {
   min-height: 100vh;
-  --card-accent: #d97706;
-  --card-accent-bg: rgba(217, 119, 6, 0.12);
   --card-green: #16a34a;
   --card-green-bg: rgba(22, 163, 74, 0.12);
 }
 
 @media (prefers-color-scheme: dark) {
   .app {
-    --card-accent: #f59e0b;
-    --card-accent-bg: rgba(245, 158, 11, 0.15);
     --card-green: #4ade80;
     --card-green-bg: rgba(74, 222, 128, 0.12);
   }
@@ -54,8 +50,8 @@
   margin-bottom: 24px;
 }
 .open-form-btn:hover {
-  border-color: var(--card-accent);
-  color: var(--card-accent);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 /* ---------- MODAL ---------- */
@@ -105,8 +101,8 @@
   line-height: 1;
 }
 .close-btn:hover {
-  background: var(--card-accent-bg);
-  color: var(--card-accent);
+  background: var(--accent-bg);
+  color: var(--accent);
 }
 .add-form label {
   display: block;
@@ -134,7 +130,7 @@
 .add-form input:focus,
 .add-form select:focus {
   outline: none;
-  border-color: var(--card-accent);
+  border-color: var(--accent);
 }
 .add-form button[type="submit"] {
   margin-top: 8px;
@@ -144,7 +140,7 @@
   border: none;
   padding: 11px 16px;
   cursor: pointer;
-  background: var(--card-accent);
+  background: var(--accent);
   color: #fff;
   transition: opacity 150ms ease;
 }
@@ -170,7 +166,7 @@
   transition: color 150ms ease, transform 150ms ease;
 }
 .star-picker button.active {
-  color: var(--card-accent);
+  color: var(--accent);
 }
 .star-picker button:hover {
   transform: scale(1.12);
@@ -201,7 +197,7 @@
   transition: border-color 150ms ease;
 }
 .movie-card:hover {
-  border-color: var(--card-accent);
+  border-color: var(--accent);
 }
 .card-top {
   display: flex;
@@ -231,8 +227,8 @@
   color: var(--card-green);
 }
 .status-badge.towatch {
-  background: var(--card-accent-bg);
-  color: var(--card-accent);
+  background: var(--accent-bg);
+  color: var(--accent);
 }
 .card-meta {
   display: flex;
@@ -254,5 +250,5 @@
   color: var(--border);
 }
 .card-stars .star.filled {
-  color: var(--card-accent);
+  color: var(--accent);
 }
