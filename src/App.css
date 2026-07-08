@@ -338,6 +338,34 @@
   color: var(--accent);
 }
 
+.status-toggle {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  background: var(--card-bg);
+  color: var(--text);
+  white-space: nowrap;
+  transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
+}
+
+.status-toggle.is-watched {
+  border-color: var(--card-green);
+  color: var(--card-green);
+}
+
+.status-toggle.is-towatch:hover {
+  border-color: var(--card-green);
+  color: var(--card-green);
+}
+
+.status-toggle.is-watched:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .card-meta {
   display: flex;
   align-items: center;
