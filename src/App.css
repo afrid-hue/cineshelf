@@ -19,14 +19,34 @@
   margin-bottom: 24px;
 }
 
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
 .app-header h1 {
-  margin: 0 0 8px;
+  margin: 0;
 }
 
 .app-header .tagline {
   color: var(--text);
-  margin: 0;
+  margin: 8px 0 0;
   font-size: 15px;
+}
+
+.theme-toggle {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ---------- MAIN CONTENT ---------- */

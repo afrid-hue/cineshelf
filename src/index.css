@@ -1,8 +1,4 @@
 :root {
-  /* Design tokens — extend these as needed.
-     Mubashira's light/dark theme task (PR 4) builds on these variables:
-     the light and dark palettes are already defined, so a theme toggle just
-     needs to flip which set is active (e.g. a data-theme attribute on <html>). */
   --text: #6b6375;
   --text-h: #08060d;
   --bg: #ffffff;
@@ -14,24 +10,30 @@
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
+  color-scheme: light;
   font: 16px/1.5 var(--sans);
-  color-scheme: light dark;
   color: var(--text-h);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --card-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-  }
+[data-theme='dark'] {
+  --text: #9ca3af;
+  --text-h: #f3f4f6;
+  --bg: #16171d;
+  --border: #2e303a;
+  --card-bg: #1f2028;
+  --accent: #c084fc;
+  --accent-bg: rgba(192, 132, 252, 0.15);
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
 }
 
 * {

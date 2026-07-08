@@ -5,6 +5,7 @@ import SummaryBar from './SummaryBar'
 import MovieDetail from './MovieDetail'
 import StarRating from './StarRating'
 import StatusToggle from './StatusToggle'
+import ThemeToggle from './ThemeToggle'
 import './App.css'
 
 const STATUS_KEY = 'cineshelf-statuses'
@@ -14,6 +15,16 @@ function App() {
   const [showForm, setShowForm] = useState(false)
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('cineshelf-theme')
+    if (saved === 'light' || saved === 'dark') return saved
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  })
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('cineshelf-theme', theme)
+  }, [theme])
 
   useEffect(() => {
     const saved = localStorage.getItem(STATUS_KEY)
@@ -60,6 +71,10 @@ function App() {
     )
   }
 
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))
+  }
+
   const toggleFavorite = (id: string) => {
     setMovies((prevMovies) =>
       prevMovies.map((movie) =>
@@ -79,7 +94,10 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>🎬 CineShelf</h1>
+        <div className="header-row">
+          <h1>🎬 CineShelf</h1>
+          <ThemeToggle theme={theme} onToggle={toggleTheme} />
+        </div>
         <p className="tagline">Your personal movie &amp; series shelf</p>
       </header>
 
