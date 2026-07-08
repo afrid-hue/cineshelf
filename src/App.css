@@ -9,9 +9,11 @@
   border-bottom: 1px solid var(--border);
   margin-bottom: 24px;
 }
+
 .app-header h1 {
   margin: 0 0 8px;
 }
+
 .app-header .tagline {
   color: var(--text);
   margin: 0;
@@ -20,7 +22,7 @@
 
 /* ---------- MAIN CONTENT ---------- */
 .app-main {
-  max-width: 560px;
+  max-width: 760px;
   margin: 0 auto;
   padding: 0 24px 60px;
 }
@@ -40,6 +42,7 @@
   transition: background 150ms ease, color 150ms ease;
   margin-bottom: 24px;
 }
+
 .open-form-btn:hover {
   background: var(--card-bg);
   color: var(--text-h);
@@ -55,6 +58,7 @@
   justify-content: center;
   z-index: 100;
 }
+
 .modal-content {
   width: 100%;
   max-width: 460px;
@@ -70,17 +74,20 @@
   display: flex;
   flex-direction: column;
 }
+
 .add-form-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 18px;
 }
+
 .add-form-header h2 {
   font-size: 22px;
   font-weight: 600;
   margin: 0;
 }
+
 .close-btn {
   background: none;
   border: none;
@@ -91,10 +98,12 @@
   border-radius: 4px;
   line-height: 1;
 }
+
 .close-btn:hover {
   background: var(--accent-bg);
   color: var(--accent);
 }
+
 .add-form label {
   display: block;
   font-size: 11.5px;
@@ -103,6 +112,7 @@
   color: var(--text);
   margin-bottom: 16px;
 }
+
 .add-form input,
 .add-form select {
   display: block;
@@ -118,11 +128,13 @@
   text-transform: none;
   letter-spacing: normal;
 }
+
 .add-form input:focus,
 .add-form select:focus {
   outline: none;
   border-color: var(--accent);
 }
+
 .add-form button[type="submit"] {
   margin-top: 8px;
   font-weight: 600;
@@ -135,6 +147,7 @@
   color: #fff;
   transition: opacity 150ms ease;
 }
+
 .add-form button[type="submit"]:hover {
   opacity: 0.85;
 }
@@ -145,6 +158,7 @@
   gap: 6px;
   margin-top: 6px;
 }
+
 .star-picker button {
   background: none;
   border: none;
@@ -156,9 +170,11 @@
   color: var(--border);
   transition: color 150ms ease, transform 150ms ease;
 }
+
 .star-picker button.active {
   color: var(--accent);
 }
+
 .star-picker button:hover {
   transform: scale(1.12);
 }
@@ -166,9 +182,12 @@
 /* ---------- MOVIE LIST ---------- */
 .movie-layout {
   display: grid;
+  grid-template-columns: minmax(240px, 1fr) minmax(280px, 1.1fr);
   gap: 16px;
   margin-top: 24px;
+  align-items: start;
 }
+
 .movie-list-minimal {
   list-style: none;
   margin: 0;
@@ -178,10 +197,12 @@
   overflow: hidden;
   background: var(--card-bg);
 }
+
 .movie-list-minimal li {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
   padding: 12px 14px;
   border-bottom: 1px solid var(--border);
   font-size: 14px;
@@ -189,16 +210,17 @@
   cursor: pointer;
   transition: background 150ms ease, color 150ms ease;
 }
+
 .movie-list-minimal li:last-child {
   border-bottom: none;
 }
-.movie-list-minimal li:hover {
-  background: var(--accent-bg);
-}
+
+.movie-list-minimal li:hover,
 .movie-list-minimal li.selected {
   background: var(--accent-bg);
   color: var(--accent);
 }
+
 .movie-meta {
   color: var(--text);
   font-size: 12px;
@@ -208,11 +230,12 @@
 
 /* ---------- DETAIL PANEL ---------- */
 .detail-panel {
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 12px;
-  background: var(--card-bg);
-  padding: 18px;
+  padding: 20px;
 }
+
 .detail-header {
   display: flex;
   justify-content: space-between;
@@ -220,10 +243,12 @@
   gap: 12px;
   margin-bottom: 16px;
 }
+
 .detail-header h2 {
   margin: 4px 0 0;
   font-size: 22px;
 }
+
 .detail-eyebrow {
   margin: 0;
   font-size: 11px;
@@ -231,6 +256,7 @@
   letter-spacing: 0.08em;
   color: var(--text);
 }
+
 .detail-close {
   border: none;
   background: none;
@@ -240,14 +266,17 @@
   padding: 4px 8px;
   border-radius: 6px;
 }
+
 .detail-close:hover {
   background: var(--accent-bg);
   color: var(--accent);
 }
+
 .detail-grid {
   display: grid;
   gap: 14px;
 }
+
 .detail-label {
   margin: 0 0 4px;
   font-size: 11px;
@@ -255,22 +284,27 @@
   letter-spacing: 0.08em;
   color: var(--text);
 }
+
 .detail-value {
   margin: 0;
   font-size: 15px;
   color: var(--text-h);
 }
+
 .rating-row {
   display: flex;
   gap: 4px;
 }
+
 .star {
   color: var(--border);
   font-size: 20px;
 }
+
 .star.filled {
   color: var(--accent);
 }
+
 .status-pill {
   display: inline-block;
   padding: 4px 8px;
@@ -278,4 +312,10 @@
   background: var(--accent-bg);
   color: var(--accent);
   font-size: 13px;
+}
+
+@media (max-width: 720px) {
+  .movie-layout {
+    grid-template-columns: 1fr;
+  }
 }

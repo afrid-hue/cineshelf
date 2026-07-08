@@ -9,7 +9,8 @@ function App() {
   const [showForm, setShowForm] = useState(false)
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null)
 
-  const selectedMovie = movies.find((movie) => movie.id === selectedMovieId) ?? null
+  const selectedMovie =
+    movies.find((movie) => movie.id === selectedMovieId) ?? null
 
   function handleAddMovie(movie: Movie) {
     setMovies((prev) => [...prev, movie])
@@ -24,13 +25,22 @@ function App() {
       </header>
 
       <main className="app-main">
-        <button className="open-form-btn" onClick={() => setShowForm(true)}>
+        <button
+          className="open-form-btn"
+          onClick={() => setShowForm(true)}
+        >
           + Add Movie
         </button>
 
         {showForm && (
-          <div className="modal-overlay" onClick={() => setShowForm(false)}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="modal-overlay"
+            onClick={() => setShowForm(false)}
+          >
+            <div
+              className="modal-content"
+              onClick={(e) => e.stopPropagation()}
+            >
               <AddMovieForm
                 onAdd={handleAddMovie}
                 onClose={() => setShowForm(false)}
@@ -45,17 +55,24 @@ function App() {
               {movies.map((movie) => (
                 <li
                   key={movie.id}
-                  className={selectedMovieId === movie.id ? 'selected' : ''}
+                  className={
+                    selectedMovieId === movie.id ? 'selected' : ''
+                  }
                   onClick={() => setSelectedMovieId(movie.id)}
                 >
                   <span>{movie.title}</span>
-                  <span className="movie-meta">{movie.genre}</span>
+                  <span className="movie-meta">
+                    {movie.genre}
+                  </span>
                 </li>
               ))}
             </ul>
 
             {selectedMovie && (
-              <MovieDetail movie={selectedMovie} onClose={() => setSelectedMovieId(null)} />
+              <MovieDetail
+                movie={selectedMovie}
+                onClose={() => setSelectedMovieId(null)}
+              />
             )}
           </div>
         )}
