@@ -1,16 +1,39 @@
-import { useState } from 'react'
-import type { Movie } from './types'
+import { useState, useEffect } from 'react'
+import type { Movie, Status } from './types'
 import AddMovieForm from './AddMovieForm'
 import SummaryBar from './SummaryBar'
 import MovieDetail from './MovieDetail'
 import StarRating from './StarRating'
+import StatusToggle from './StatusToggle'
 import './App.css'
+
+const STATUS_KEY = 'cineshelf-statuses'
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([])
   const [showForm, setShowForm] = useState(false)
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+
+  useEffect(() => {
+    const saved = localStorage.getItem(STATUS_KEY)
+    if (!saved) return
+    const statuses = JSON.parse(saved) as Record<string, Status>
+    setMovies((prev) =>
+      prev.map((m) => ({
+        ...m,
+        status: statuses[m.id] ?? m.status,
+      }))
+    )
+  }, [])
+
+  useEffect(() => {
+    const statuses: Record<string, Status> = {}
+    movies.forEach((m) => {
+      statuses[m.id] = m.status
+    })
+    localStorage.setItem(STATUS_KEY, JSON.stringify(statuses))
+  }, [movies])
 
   const selectedMovie =
     movies.find((movie) => movie.id === selectedMovieId) ?? null
@@ -22,6 +45,19 @@ function App() {
   function handleAddMovie(movie: Movie) {
     setMovies((prev) => [...prev, movie])
     setSelectedMovieId(movie.id)
+  }
+
+  const toggleStatus = (id: string) => {
+    setMovies((prev) =>
+      prev.map((movie) =>
+        movie.id === id
+          ? {
+              ...movie,
+              status: movie.status === 'watched' ? 'towatch' : 'watched',
+            }
+          : movie
+      )
+    )
   }
 
   const toggleFavorite = (id: string) => {
@@ -97,6 +133,10 @@ function App() {
                       </div>
                       <div className="card-meta">
                         <span className="card-genre">{movie.genre}</span>
+                        <StatusToggle
+                          status={movie.status}
+                          onToggle={() => toggleStatus(movie.id)}
+                        />
                         <StarRating
                           className="card-stars"
                           rating={movie.rating}
