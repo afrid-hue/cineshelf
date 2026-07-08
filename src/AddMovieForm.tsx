@@ -16,10 +16,13 @@ export default function AddMovieForm({ onAdd, onClose }: Props) {
   const [genre, setGenre] = useState(GENRES[0])
   const [rating, setRating] = useState(0)
   const [status, setStatus] = useState<Status>('towatch')
+  const [progress, setProgress] = useState('')
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!title.trim()) return
+
+    const normalizedProgress = progress.trim()
 
     onAdd({
       id: crypto.randomUUID(),
@@ -27,6 +30,7 @@ export default function AddMovieForm({ onAdd, onClose }: Props) {
       genre,
       rating,
       status,
+      progress: normalizedProgress || undefined,
     })
 
     onClose()
@@ -86,6 +90,15 @@ export default function AddMovieForm({ onAdd, onClose }: Props) {
           <option value="towatch">To Watch</option>
           <option value="watched">Watched</option>
         </select>
+      </label>
+
+      <label>
+        Series Progress
+        <input
+          value={progress}
+          onChange={(e) => setProgress(e.target.value)}
+          placeholder="e.g. S2 E4"
+        />
       </label>
 
       <button type="submit">Add Movie</button>
