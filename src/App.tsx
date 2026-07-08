@@ -4,20 +4,33 @@ import AddMovieForm from './AddMovieForm'
 import SummaryBar from './SummaryBar'
 import MovieDetail from './MovieDetail'
 import StarRating from './StarRating'
+import CollectionManager from './CollectionManager'
+import type { Collection } from './types'
 import './App.css'
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([])
+  const [collections, setCollections] = useState<Collection[]>([])
   const [showForm, setShowForm] = useState(false)
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string | null>(null)
 
   const selectedMovie =
     movies.find((movie) => movie.id === selectedMovieId) ?? null
 
-  const filteredMovies = movies.filter((movie) =>
-    movie.title.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredMovies = movies.filter((movie) => {
+    const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+
+    if (!selectedCollectionId) {
+      return matchesSearch
+    }
+
+    const collection = collections.find((item) => item.id === selectedCollectionId)
+    const inCollection = collection?.movieIds.includes(movie.id) ?? false
+
+    return matchesSearch && inCollection
+  })
 
   function handleAddMovie(movie: Movie) {
     setMovies((prev) => [...prev, movie])
@@ -36,6 +49,54 @@ function App() {
     setMovies((prevMovies) =>
       prevMovies.map((movie) =>
         movie.id === movieId ? { ...movie, note } : movie
+      )
+    )
+  }
+
+  const handleCreateCollection = (name: string) => {
+    const trimmedName = name.trim()
+    if (!trimmedName) {
+      return
+    }
+
+    setCollections((prevCollections) => [
+      ...prevCollections,
+      {
+        id: crypto.randomUUID(),
+        name: trimmedName,
+        movieIds: [],
+      },
+    ])
+  }
+
+  const handleAssignMovieToCollection = (collectionId: string, movieId: string) => {
+    setCollections((prevCollections) =>
+      prevCollections.map((collection) => {
+        if (collection.id !== collectionId) {
+          return collection
+        }
+
+        if (collection.movieIds.includes(movieId)) {
+          return collection
+        }
+
+        return {
+          ...collection,
+          movieIds: [...collection.movieIds, movieId],
+        }
+      })
+    )
+  }
+
+  const handleRemoveMovieFromCollection = (collectionId: string, movieId: string) => {
+    setCollections((prevCollections) =>
+      prevCollections.map((collection) =>
+        collection.id === collectionId
+          ? {
+              ...collection,
+              movieIds: collection.movieIds.filter((id) => id !== movieId),
+            }
+          : collection
       )
     )
   }
@@ -64,6 +125,16 @@ function App() {
         )}
 
         <SummaryBar movies={movies} />
+
+        <CollectionManager
+          movies={movies}
+          collections={collections}
+          selectedCollectionId={selectedCollectionId}
+          onSelectCollection={setSelectedCollectionId}
+          onCreateCollection={handleCreateCollection}
+          onAssignMovieToCollection={handleAssignMovieToCollection}
+          onRemoveMovieFromCollection={handleRemoveMovieFromCollection}
+        />
 
         {movies.length === 0 ? (
           <p className="empty-state">No movies yet — add one to get started!</p>
