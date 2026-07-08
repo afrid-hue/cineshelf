@@ -34,6 +34,36 @@
   padding: 0 24px 60px;
 }
 
+/* ---------- SUMMARY BAR ---------- */
+.summary-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.summary-stat {
+  flex: 1;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.summary-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-h);
+  line-height: 1;
+}
+.summary-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text);
+}
+
 /* ---------- OPEN FORM BUTTON ---------- */
 .open-form-btn {
   display: block;
