@@ -26,6 +26,11 @@ function App() {
     localStorage.setItem('cineshelf-theme', theme)
   }, [theme])
 
+  const [genreFilter, setGenreFilter] = useState('All')
+  const [statusFilter, setStatusFilter] = useState('All')
+
+  const genres = ['All', ...new Set(movies.map((m) => m.genre))]
+
   useEffect(() => {
     const saved = localStorage.getItem(STATUS_KEY)
     if (!saved) return
@@ -49,9 +54,12 @@ function App() {
   const selectedMovie =
     movies.find((movie) => movie.id === selectedMovieId) ?? null
 
-  const filteredMovies = movies.filter((movie) =>
-    movie.title.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredMovies = movies.filter((m) => {
+    const matchesSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesGenre = genreFilter === 'All' || m.genre === genreFilter
+    const matchesStatus = statusFilter === 'All' || m.status === statusFilter
+    return matchesSearch && matchesGenre && matchesStatus
+  })
 
   function handleAddMovie(movie: Movie) {
     setMovies((prev) => [...prev, movie])
@@ -120,7 +128,9 @@ function App() {
         <SummaryBar movies={movies} />
 
         {movies.length === 0 ? (
-          <p className="empty-state">No movies yet — add one to get started!</p>
+          <p className="empty-state">
+            No movies yet — add one to get started!
+          </p>
         ) : (
           <div className="movie-layout">
             <div className="movie-list-container">
@@ -131,7 +141,32 @@ function App() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-
+              <div className="filters-row">
+                <label className="filter-group">
+                  <span className="filter-label">Genre</span>
+                  <select
+                    className="filter-select"
+                    value={genreFilter}
+                    onChange={(e) => setGenreFilter(e.target.value)}
+                  >
+                    {genres.map((g) => (
+                      <option key={g} value={g}>{g}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="filter-group">
+                  <span className="filter-label">Status</span>
+                  <select
+                    className="filter-select"
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                  >
+                    <option value="All">All</option>
+                    <option value="watched">Watched</option>
+                    <option value="towatch">To Watch</option>
+                  </select>
+                </label>
+              </div>
               {filteredMovies.length > 0 ? (
                 <ul className="movie-list">
                   {filteredMovies.map((movie) => (
@@ -144,25 +179,36 @@ function App() {
                         >
                           {movie.title}
                         </h3>
+
                         <span className={`status-badge ${movie.status}`}>
-                          {movie.status === 'watched' ? 'Watched' : 'To Watch'}
+                          {movie.status === 'watched'
+                            ? 'Watched'
+                            : 'To Watch'}
                         </span>
+
                         <button
-                          className={`favorite-btn ${movie.favorite ? 'is-favorite' : ''}`}
+                          className={`favorite-btn ${
+                            movie.favorite ? 'is-favorite' : ''
+                          }`}
                           onClick={() => toggleFavorite(movie.id)}
                           aria-label={
-                            movie.favorite ? 'Remove from favorites' : 'Add to favorites'
+                            movie.favorite
+                              ? 'Remove from favorites'
+                              : 'Add to favorites'
                           }
                         >
                           {movie.favorite ? '♥' : '♡'}
                         </button>
                       </div>
+
                       <div className="card-meta">
-                        <span className="card-genre">{movie.genre}</span>
-                        <StatusToggle
-                          status={movie.status}
-                          onToggle={() => toggleStatus(movie.id)}
-                        />
+                        <div className="card-details">
+                          <span className="card-genre">{movie.genre}</span>
+                          <StatusToggle
+                            status={movie.status}
+                            onToggle={() => toggleStatus(movie.id)}
+                          />
+                        </div>
                         <StarRating
                           className="card-stars"
                           rating={movie.rating}
