@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { Movie } from './types'
 import AddMovieForm from './AddMovieForm'
 import SummaryBar from './SummaryBar'
+import StarRating from './StarRating'
 import './App.css'
 
 function App() {
@@ -76,11 +77,19 @@ function App() {
                     </div>
                     <div className="card-meta">
                       <span className="card-genre">{m.genre}</span>
-                      <span className="card-stars">
-                        {[1, 2, 3, 4, 5].map((n) => (
-                          <span key={n} className={n <= m.rating ? 'star filled' : 'star'}>★</span>
-                        ))}
-                      </span>
+                      <StarRating
+                        className="card-stars"
+                        rating={m.rating}
+                        onRate={(r) =>
+                          setMovies((prev) =>
+                            prev.map((movie) =>
+                              movie.id === m.id
+                                ? { ...movie, rating: r }
+                                : movie
+                            )
+                          )
+                       }
+                      />
                     </div>
                   </li>
                 ))}
