@@ -1,27 +1,70 @@
-import { useState } from 'react'
-import type { Movie } from './types'
+import { useState, useEffect } from 'react'
+import type { Movie, Status } from './types'
 import AddMovieForm from './AddMovieForm'
 import SummaryBar from './SummaryBar'
 import MovieDetail from './MovieDetail'
 import StarRating from './StarRating'
+import StatusToggle from './StatusToggle'
 import './App.css'
+
+const STATUS_KEY = 'cineshelf-statuses'
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([])
   const [showForm, setShowForm] = useState(false)
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [genreFilter, setGenreFilter] = useState('All')
+  const [statusFilter, setStatusFilter] = useState('All')
+
+  const genres = ['All', ...new Set(movies.map((m) => m.genre))]
+
+  useEffect(() => {
+    const saved = localStorage.getItem(STATUS_KEY)
+    if (!saved) return
+    const statuses = JSON.parse(saved) as Record<string, Status>
+    setMovies((prev) =>
+      prev.map((m) => ({
+        ...m,
+        status: statuses[m.id] ?? m.status,
+      }))
+    )
+  }, [])
+
+  useEffect(() => {
+    const statuses: Record<string, Status> = {}
+    movies.forEach((m) => {
+      statuses[m.id] = m.status
+    })
+    localStorage.setItem(STATUS_KEY, JSON.stringify(statuses))
+  }, [movies])
 
   const selectedMovie =
     movies.find((movie) => movie.id === selectedMovieId) ?? null
 
-  const filteredMovies = movies.filter((movie) =>
-    movie.title.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredMovies = movies.filter((m) => {
+    const matchesSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesGenre = genreFilter === 'All' || m.genre === genreFilter
+    const matchesStatus = statusFilter === 'All' || m.status === statusFilter
+    return matchesSearch && matchesGenre && matchesStatus
+  })
 
   function handleAddMovie(movie: Movie) {
     setMovies((prev) => [...prev, movie])
     setSelectedMovieId(movie.id)
+  }
+
+  const toggleStatus = (id: string) => {
+    setMovies((prev) =>
+      prev.map((movie) =>
+        movie.id === id
+          ? {
+              ...movie,
+              status: movie.status === 'watched' ? 'towatch' : 'watched',
+            }
+          : movie
+      )
+    )
   }
 
   const toggleFavorite = (id: string) => {
@@ -79,7 +122,32 @@ function App() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-
+              <div className="filters-row">
+                <label className="filter-group">
+                  <span className="filter-label">Genre</span>
+                  <select
+                    className="filter-select"
+                    value={genreFilter}
+                    onChange={(e) => setGenreFilter(e.target.value)}
+                  >
+                    {genres.map((g) => (
+                      <option key={g} value={g}>{g}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="filter-group">
+                  <span className="filter-label">Status</span>
+                  <select
+                    className="filter-select"
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                  >
+                    <option value="All">All</option>
+                    <option value="watched">Watched</option>
+                    <option value="towatch">To Watch</option>
+                  </select>
+                </label>
+              </div>
               {filteredMovies.length > 0 ? (
                 <ul className="movie-list">
                   {filteredMovies.map((movie) => (
@@ -115,16 +183,6 @@ function App() {
                       </div>
 
                       <div className="card-meta">
-                        <div className="card-details">
-                          <span className="card-genre">{movie.genre}</span>
-
-                          {movie.progress && (
-                            <span className="card-progress">
-                              Progress: {movie.progress}
-                            </span>
-                          )}
-                        </div>
-
                         <StarRating
                           className="card-stars"
                           rating={movie.rating}
