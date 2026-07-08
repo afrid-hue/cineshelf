@@ -15,6 +15,10 @@ function App() {
   const [editingMovieId, setEditingMovieId] = useState<string | null>(null)
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [genreFilter, setGenreFilter] = useState('All')
+  const [statusFilter, setStatusFilter] = useState('All')
+
+  const genres = ['All', ...new Set(movies.map((m) => m.genre))]
 
   useEffect(() => {
     const saved = localStorage.getItem(STATUS_KEY)
@@ -42,9 +46,12 @@ function App() {
   const editingMovie =
     movies.find((movie) => movie.id === editingMovieId) ?? null
 
-  const filteredMovies = movies.filter((movie) =>
-    movie.title.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredMovies = movies.filter((m) => {
+    const matchesSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesGenre = genreFilter === 'All' || m.genre === genreFilter
+    const matchesStatus = statusFilter === 'All' || m.status === statusFilter
+    return matchesSearch && matchesGenre && matchesStatus
+  })
 
   function handleAddMovie(movie: Movie) {
     setMovies((prev) => [...prev, movie])
@@ -135,7 +142,32 @@ function App() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-
+              <div className="filters-row">
+                <label className="filter-group">
+                  <span className="filter-label">Genre</span>
+                  <select
+                    className="filter-select"
+                    value={genreFilter}
+                    onChange={(e) => setGenreFilter(e.target.value)}
+                  >
+                    {genres.map((g) => (
+                      <option key={g} value={g}>{g}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="filter-group">
+                  <span className="filter-label">Status</span>
+                  <select
+                    className="filter-select"
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                  >
+                    <option value="All">All</option>
+                    <option value="watched">Watched</option>
+                    <option value="towatch">To Watch</option>
+                  </select>
+                </label>
+              </div>
               {filteredMovies.length > 0 ? (
                 <ul className="movie-list">
                   {filteredMovies.map((movie) => (
