@@ -8,10 +8,17 @@ function App() {
   const [movies, setMovies] = useState<Movie[]>([])
   const [showForm, setShowForm] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [genreFilter, setGenreFilter] = useState('All')
+  const [statusFilter, setStatusFilter] = useState('All')
 
-  const filteredMovies = movies.filter((m) =>
-    m.title.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const genres = ['All', ...new Set(movies.map((m) => m.genre))]
+
+  const filteredMovies = movies.filter((m) => {
+    const matchesSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesGenre = genreFilter === 'All' || m.genre === genreFilter
+    const matchesStatus = statusFilter === 'All' || m.status === statusFilter
+    return matchesSearch && matchesGenre && matchesStatus
+  })
 
   const toggleFavorite = (id: string) => {
     setMovies((prevMovies) =>
@@ -54,6 +61,32 @@ function App() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+            <div className="filters-row">
+              <label className="filter-group">
+                <span className="filter-label">Genre</span>
+                <select
+                  className="filter-select"
+                  value={genreFilter}
+                  onChange={(e) => setGenreFilter(e.target.value)}
+                >
+                  {genres.map((g) => (
+                    <option key={g} value={g}>{g}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="filter-group">
+                <span className="filter-label">Status</span>
+                <select
+                  className="filter-select"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                  <option value="All">All</option>
+                  <option value="watched">Watched</option>
+                  <option value="towatch">To Watch</option>
+                </select>
+              </label>
+            </div>
             {filteredMovies.length > 0 ? (
               <ul className="movie-list">
                 {filteredMovies.map((m) => (
