@@ -19,10 +19,13 @@ export default function AddMovieForm({ onAdd, onUpdate, initialMovie, onClose }:
   const [genre, setGenre] = useState(initialMovie?.genre ?? GENRES[0])
   const [rating, setRating] = useState(initialMovie?.rating ?? 0)
   const [status, setStatus] = useState<Status>(initialMovie?.status ?? 'towatch')
+  const [progress, setProgress] = useState(initialMovie?.progress ?? '')
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!title.trim()) return
+
+    const normalizedProgress = progress.trim()
 
     if (isEdit && onUpdate && initialMovie) {
       onUpdate({
@@ -31,6 +34,7 @@ export default function AddMovieForm({ onAdd, onUpdate, initialMovie, onClose }:
         genre,
         rating,
         status,
+        progress: normalizedProgress || undefined,
       })
     } else if (onAdd) {
       onAdd({
@@ -39,6 +43,7 @@ export default function AddMovieForm({ onAdd, onUpdate, initialMovie, onClose }:
         genre,
         rating,
         status,
+        progress: normalizedProgress || undefined,
       })
     }
 
@@ -99,6 +104,15 @@ export default function AddMovieForm({ onAdd, onUpdate, initialMovie, onClose }:
           <option value="towatch">To Watch</option>
           <option value="watched">Watched</option>
         </select>
+      </label>
+
+      <label>
+        Series Progress
+        <input
+          value={progress}
+          onChange={(e) => setProgress(e.target.value)}
+          placeholder="e.g. S2 E4"
+        />
       </label>
 
       <button type="submit">{isEdit ? 'Save Changes' : 'Add Movie'}</button>

@@ -4,7 +4,6 @@ import AddMovieForm from './AddMovieForm'
 import SummaryBar from './SummaryBar'
 import MovieDetail from './MovieDetail'
 import StarRating from './StarRating'
-import StatusToggle from './StatusToggle'
 import './App.css'
 
 const STATUS_KEY = 'cineshelf-statuses'
@@ -64,19 +63,6 @@ function App() {
     )
   }
 
-  const toggleStatus = (id: string) => {
-    setMovies((prev) =>
-      prev.map((movie) =>
-        movie.id === id
-          ? {
-              ...movie,
-              status: movie.status === 'watched' ? 'towatch' : 'watched',
-            }
-          : movie
-      )
-    )
-  }
-
   const toggleFavorite = (id: string) => {
     setMovies((prevMovies) =>
       prevMovies.map((movie) =>
@@ -131,7 +117,9 @@ function App() {
         <SummaryBar movies={movies} />
 
         {movies.length === 0 ? (
-          <p className="empty-state">No movies yet — add one to get started!</p>
+          <p className="empty-state">
+            No movies yet — add one to get started!
+          </p>
         ) : (
           <div className="movie-layout">
             <div className="movie-list-container">
@@ -180,14 +168,22 @@ function App() {
                         >
                           {movie.title}
                         </h3>
+
                         <span className={`status-badge ${movie.status}`}>
-                          {movie.status === 'watched' ? 'Watched' : 'To Watch'}
+                          {movie.status === 'watched'
+                            ? 'Watched'
+                            : 'To Watch'}
                         </span>
+
                         <button
-                          className={`favorite-btn ${movie.favorite ? 'is-favorite' : ''}`}
+                          className={`favorite-btn ${
+                            movie.favorite ? 'is-favorite' : ''
+                          }`}
                           onClick={() => toggleFavorite(movie.id)}
                           aria-label={
-                            movie.favorite ? 'Remove from favorites' : 'Add to favorites'
+                            movie.favorite
+                              ? 'Remove from favorites'
+                              : 'Add to favorites'
                           }
                         >
                           {movie.favorite ? '♥' : '♡'}
@@ -200,12 +196,8 @@ function App() {
                           ✎
                         </button>
                       </div>
+
                       <div className="card-meta">
-                        <span className="card-genre">{movie.genre}</span>
-                        <StatusToggle
-                          status={movie.status}
-                          onToggle={() => toggleStatus(movie.id)}
-                        />
                         <StarRating
                           className="card-stars"
                           rating={movie.rating}
