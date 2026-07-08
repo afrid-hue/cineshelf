@@ -1,12 +1,28 @@
+import { useEffect, useState } from 'react'
 import type { Movie } from './types'
 
 interface MovieDetailProps {
   movie: Movie
   onClose: () => void
+  onNoteChange: (movieId: string, note: string) => void
 }
 
-export default function MovieDetail({ movie, onClose }: MovieDetailProps) {
+export default function MovieDetail({ movie, onClose, onNoteChange }: MovieDetailProps) {
   const statusLabel = movie.status === 'watched' ? 'Watched' : 'To Watch'
+  const [isEditingNote, setIsEditingNote] = useState(false)
+  const [draftNote, setDraftNote] = useState(movie.note ?? '')
+
+  useEffect(() => {
+    setDraftNote(movie.note ?? '')
+    setIsEditingNote(false)
+  }, [movie.id, movie.note])
+
+  const hasNote = Boolean(movie.note?.trim())
+
+  const handleSaveNote = () => {
+    onNoteChange(movie.id, draftNote)
+    setIsEditingNote(false)
+  }
 
   return (
     <section className="detail-panel" aria-label="Movie details">
@@ -43,6 +59,53 @@ export default function MovieDetail({ movie, onClose }: MovieDetailProps) {
             <span className="status-pill">{statusLabel}</span>
           </p>
         </div>
+      </div>
+
+      <div className="note-section">
+        <div className="note-section-header">
+          <p className="detail-label">Personal note</p>
+          <button
+            type="button"
+            className="note-action-btn"
+            onClick={() => {
+              setDraftNote(movie.note ?? '')
+              setIsEditingNote(true)
+            }}
+          >
+            {hasNote ? 'Edit Note' : 'Add Note'}
+          </button>
+        </div>
+
+        {isEditingNote ? (
+          <div className="note-editor">
+            <textarea
+              className="note-textarea"
+              value={draftNote}
+              onChange={(event) => setDraftNote(event.target.value)}
+              rows={4}
+              placeholder="Write a personal note about this movie..."
+            />
+            <div className="note-actions">
+              <button
+                type="button"
+                className="note-cancel-btn"
+                onClick={() => {
+                  setDraftNote(movie.note ?? '')
+                  setIsEditingNote(false)
+                }}
+              >
+                Cancel
+              </button>
+              <button type="button" className="note-save-btn" onClick={handleSaveNote}>
+                Save
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="note-preview">
+            {hasNote ? <p>{movie.note}</p> : <p className="note-empty">No notes yet.</p>}
+          </div>
+        )}
       </div>
     </section>
   )

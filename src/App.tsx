@@ -32,6 +32,14 @@ function App() {
     )
   }
 
+  const handleNoteChange = (movieId: string, note: string) => {
+    setMovies((prevMovies) =>
+      prevMovies.map((movie) =>
+        movie.id === movieId ? { ...movie, note } : movie
+      )
+    )
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -100,6 +108,7 @@ function App() {
               </button>
             </div>
 
+<<<<<<< HEAD
             <div className="card-meta">
               <div className="card-details">
                 <span className="card-genre">{movie.genre}</span>
@@ -123,6 +132,13 @@ function App() {
                     )
                   )
                 }
+=======
+            {selectedMovie && (
+              <MovieDetail
+                movie={selectedMovie}
+                onClose={() => setSelectedMovieId(null)}
+                onNoteChange={handleNoteChange}
+>>>>>>> origin/main
               />
             </div>
           </li>

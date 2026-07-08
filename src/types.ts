@@ -24,4 +24,5 @@ export interface Movie {
   status: Status
   progress?: string
   favorite?: boolean // Mubashira — favorites toggle
+  note?: string // Jithya — notes per movie
 }

@@ -519,6 +519,90 @@
   font-size: 13px;
 }
 
+.note-section {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.note-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.note-action-btn,
+.note-cancel-btn,
+.note-save-btn {
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 7px 10px;
+  transition: opacity 150ms ease;
+}
+
+.note-action-btn,
+.note-cancel-btn {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.note-save-btn {
+  background: var(--accent);
+  color: #fff;
+}
+
+.note-action-btn:hover,
+.note-cancel-btn:hover,
+.note-save-btn:hover {
+  opacity: 0.9;
+}
+
+.note-preview,
+.note-editor {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.note-preview p {
+  margin: 0;
+  color: var(--text-h);
+  line-height: 1.5;
+}
+
+.note-empty {
+  color: var(--text) !important;
+}
+
+.note-textarea {
+  width: 100%;
+  min-height: 90px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--card-bg);
+  color: var(--text-h);
+  padding: 10px 12px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.note-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.note-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
 @media (max-width: 720px) {
   .movie-layout {
     grid-template-columns: 1fr;
