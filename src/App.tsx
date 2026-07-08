@@ -66,97 +66,96 @@ function App() {
         <SummaryBar movies={movies} />
 
         {movies.length === 0 ? (
-          <p className="empty-state">No movies yet — add one to get started!</p>
+          <p className="empty-state">
+            No movies yet — add one to get started!
+          </p>
         ) : (
-<div className="movie-layout">
-  <div className="movie-list-container">
-    <input
-      type="text"
-      placeholder="Search movies..."
-      className="search-input"
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-    />
+          <div className="movie-layout">
+            <div className="movie-list-container">
+              <input
+                type="text"
+                placeholder="Search movies..."
+                className="search-input"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
 
-    {filteredMovies.length > 0 ? (
-      <ul className="movie-list">
-        {filteredMovies.map((movie) => (
-          <li key={movie.id} className="movie-card">
-            <div className="card-top">
-              <h3
-                className="card-title"
-                style={{ cursor: 'pointer' }}
-                onClick={() => setSelectedMovieId(movie.id)}
-              >
-                {movie.title}
-              </h3>
+              {filteredMovies.length > 0 ? (
+                <ul className="movie-list">
+                  {filteredMovies.map((movie) => (
+                    <li key={movie.id} className="movie-card">
+                      <div className="card-top">
+                        <h3
+                          className="card-title"
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => setSelectedMovieId(movie.id)}
+                        >
+                          {movie.title}
+                        </h3>
 
-              <span className={`status-badge ${movie.status}`}>
-                {movie.status === 'watched' ? 'Watched' : 'To Watch'}
-              </span>
+                        <span className={`status-badge ${movie.status}`}>
+                          {movie.status === 'watched'
+                            ? 'Watched'
+                            : 'To Watch'}
+                        </span>
 
-              <button
-                className={`favorite-btn ${movie.favorite ? 'is-favorite' : ''}`}
-                onClick={() => toggleFavorite(movie.id)}
-                aria-label={
-                  movie.favorite
-                    ? 'Remove from favorites'
-                    : 'Add to favorites'
-                }
-              >
-                {movie.favorite ? '♥' : '♡'}
-              </button>
+                        <button
+                          className={`favorite-btn ${
+                            movie.favorite ? 'is-favorite' : ''
+                          }`}
+                          onClick={() => toggleFavorite(movie.id)}
+                          aria-label={
+                            movie.favorite
+                              ? 'Remove from favorites'
+                              : 'Add to favorites'
+                          }
+                        >
+                          {movie.favorite ? '♥' : '♡'}
+                        </button>
+                      </div>
+
+                      <div className="card-meta">
+                        <div className="card-details">
+                          <span className="card-genre">{movie.genre}</span>
+
+                          {movie.progress && (
+                            <span className="card-progress">
+                              Progress: {movie.progress}
+                            </span>
+                          )}
+                        </div>
+
+                        <StarRating
+                          className="card-stars"
+                          rating={movie.rating}
+                          onRate={(rating) =>
+                            setMovies((prev) =>
+                              prev.map((currentMovie) =>
+                                currentMovie.id === movie.id
+                                  ? { ...currentMovie, rating }
+                                  : currentMovie
+                              )
+                            )
+                          }
+                        />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="no-movies-message">No movies found</p>
+              )}
             </div>
 
-<<<<<<< HEAD
-            <div className="card-meta">
-              <div className="card-details">
-                <span className="card-genre">{movie.genre}</span>
-
-                {movie.progress && (
-                  <span className="card-progress">
-                    Progress: {movie.progress}
-                  </span>
-                )}
-              </div>
-
-              <StarRating
-                className="card-stars"
-                rating={movie.rating}
-                onRate={(rating) =>
-                  setMovies((prev) =>
-                    prev.map((currentMovie) =>
-                      currentMovie.id === movie.id
-                        ? { ...currentMovie, rating }
-                        : currentMovie
-                    )
-                  )
-                }
-=======
             {selectedMovie && (
               <MovieDetail
                 movie={selectedMovie}
                 onClose={() => setSelectedMovieId(null)}
                 onNoteChange={handleNoteChange}
->>>>>>> origin/main
               />
-            </div>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <p className="no-movies-message">No movies found</p>
-    )}
-  </div>
-
-  {selectedMovie && (
-    <MovieDetail
-      movie={selectedMovie}
-      onClose={() => setSelectedMovieId(null)}
-    />
-  )}
-</div>
-)}
+            )}
+          </div>
+        )}
       </main>
     </div>
   )
