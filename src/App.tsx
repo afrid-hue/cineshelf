@@ -1,17 +1,23 @@
 import { useState } from 'react'
 import type { Movie } from './types'
 import AddMovieForm from './AddMovieForm'
+import SummaryBar from './SummaryBar'
+import MovieDetail from './MovieDetail'
 import StarRating from './StarRating'
 import './App.css'
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([])
   const [showForm, setShowForm] = useState(false)
+  const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [genreFilter, setGenreFilter] = useState('All')
   const [statusFilter, setStatusFilter] = useState('All')
 
   const genres = ['All', ...new Set(movies.map((m) => m.genre))]
+
+  const selectedMovie =
+    movies.find((movie) => movie.id === selectedMovieId) ?? null
 
   const filteredMovies = movies.filter((m) => {
     const matchesSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -20,10 +26,23 @@ function App() {
     return matchesSearch && matchesGenre && matchesStatus
   })
 
+  function handleAddMovie(movie: Movie) {
+    setMovies((prev) => [...prev, movie])
+    setSelectedMovieId(movie.id)
+  }
+
   const toggleFavorite = (id: string) => {
     setMovies((prevMovies) =>
-      prevMovies.map((m) =>
-        m.id === id ? { ...m, favorite: !m.favorite } : m
+      prevMovies.map((movie) =>
+        movie.id === id ? { ...movie, favorite: !movie.favorite } : movie
+      )
+    )
+  }
+
+  const handleNoteChange = (movieId: string, note: string) => {
+    setMovies((prevMovies) =>
+      prevMovies.map((movie) =>
+        movie.id === movieId ? { ...movie, note } : movie
       )
     )
   }
@@ -44,87 +63,108 @@ function App() {
           <div className="modal-overlay" onClick={() => setShowForm(false)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <AddMovieForm
-                onAdd={(movie) => setMovies((prev) => [...prev, movie])}
+                onAdd={handleAddMovie}
                 onClose={() => setShowForm(false)}
               />
             </div>
           </div>
         )}
+
+        <SummaryBar movies={movies} />
+
         {movies.length === 0 ? (
           <p className="empty-state">No movies yet — add one to get started!</p>
         ) : (
-          <div className="movie-list-container">
-            <input
-              type="text"
-              placeholder="Search movies..."
-              className="search-input"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <div className="filters-row">
-              <label className="filter-group">
-                <span className="filter-label">Genre</span>
-                <select
-                  className="filter-select"
-                  value={genreFilter}
-                  onChange={(e) => setGenreFilter(e.target.value)}
-                >
-                  {genres.map((g) => (
-                    <option key={g} value={g}>{g}</option>
-                  ))}
-                </select>
-              </label>
-              <label className="filter-group">
-                <span className="filter-label">Status</span>
-                <select
-                  className="filter-select"
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                >
-                  <option value="All">All</option>
-                  <option value="watched">Watched</option>
-                  <option value="towatch">To Watch</option>
-                </select>
-              </label>
-            </div>
-            {filteredMovies.length > 0 ? (
-              <ul className="movie-list">
-                {filteredMovies.map((m) => (
-                  <li key={m.id} className="movie-card">
-                    <div className="card-top">
-                      <h3 className="card-title">{m.title}</h3>
-                      <span className={`status-badge ${m.status}`}>
-                        {m.status === 'watched' ? 'Watched' : 'To Watch'}
-                      </span>
-                      <button
-                        className={`favorite-btn ${m.favorite ? 'is-favorite' : ''}`}
-                        onClick={() => toggleFavorite(m.id)}
-                        aria-label={m.favorite ? 'Remove from favorites' : 'Add to favorites'}
-                      >
-                        {m.favorite ? '♥' : '♡'}
-                      </button>
-                    </div>
-                    <div className="card-meta">
-                      <span className="card-genre">{m.genre}</span>
-                      <StarRating
-                        className="card-stars"
-                        rating={m.rating}
-                        onRate={(r) =>
-                          setMovies((prev) =>
-                            prev.map((movie) =>
-                              movie.id === m.id
-                                ? { ...movie, rating: r }
-                                : movie
+          <div className="movie-layout">
+            <div className="movie-list-container">
+              <input
+                type="text"
+                placeholder="Search movies..."
+                className="search-input"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <div className="filters-row">
+                <label className="filter-group">
+                  <span className="filter-label">Genre</span>
+                  <select
+                    className="filter-select"
+                    value={genreFilter}
+                    onChange={(e) => setGenreFilter(e.target.value)}
+                  >
+                    {genres.map((g) => (
+                      <option key={g} value={g}>{g}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="filter-group">
+                  <span className="filter-label">Status</span>
+                  <select
+                    className="filter-select"
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                  >
+                    <option value="All">All</option>
+                    <option value="watched">Watched</option>
+                    <option value="towatch">To Watch</option>
+                  </select>
+                </label>
+              </div>
+              {filteredMovies.length > 0 ? (
+                <ul className="movie-list">
+                  {filteredMovies.map((movie) => (
+                    <li key={movie.id} className="movie-card">
+                      <div className="card-top">
+                        <h3
+                          className="card-title"
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => setSelectedMovieId(movie.id)}
+                        >
+                          {movie.title}
+                        </h3>
+                        <span className={`status-badge ${movie.status}`}>
+                          {movie.status === 'watched' ? 'Watched' : 'To Watch'}
+                        </span>
+                        <button
+                          className={`favorite-btn ${movie.favorite ? 'is-favorite' : ''}`}
+                          onClick={() => toggleFavorite(movie.id)}
+                          aria-label={
+                            movie.favorite ? 'Remove from favorites' : 'Add to favorites'
+                          }
+                        >
+                          {movie.favorite ? '♥' : '♡'}
+                        </button>
+                      </div>
+                      <div className="card-meta">
+                        <span className="card-genre">{movie.genre}</span>
+                        <StarRating
+                          className="card-stars"
+                          rating={movie.rating}
+                          onRate={(rating) =>
+                            setMovies((prev) =>
+                              prev.map((currentMovie) =>
+                                currentMovie.id === movie.id
+                                  ? { ...currentMovie, rating }
+                                  : currentMovie
+                              )
                             )
-                          )
-                       }
-                      />
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="no-movies-message">No movies found</p>
+                          }
+                        />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="no-movies-message">No movies found</p>
+              )}
+            </div>
+
+            {selectedMovie && (
+              <MovieDetail
+                movie={selectedMovie}
+                onClose={() => setSelectedMovieId(null)}
+                onNoteChange={handleNoteChange}
+              />
             )}
           </div>
         )}
