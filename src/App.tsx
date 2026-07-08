@@ -9,11 +9,15 @@ import './App.css'
 function App() {
   const [movies, setMovies] = useState<Movie[]>([])
   const [showForm, setShowForm] = useState(false)
+  const [editingMovieId, setEditingMovieId] = useState<string | null>(null)
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
 
   const selectedMovie =
     movies.find((movie) => movie.id === selectedMovieId) ?? null
+
+  const editingMovie =
+    movies.find((movie) => movie.id === editingMovieId) ?? null
 
   const filteredMovies = movies.filter((movie) =>
     movie.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -22,6 +26,12 @@ function App() {
   function handleAddMovie(movie: Movie) {
     setMovies((prev) => [...prev, movie])
     setSelectedMovieId(movie.id)
+  }
+
+  function handleUpdateMovie(movie: Movie) {
+    setMovies((prev) =>
+      prev.map((m) => (m.id === movie.id ? movie : m))
+    )
   }
 
   const toggleFavorite = (id: string) => {
@@ -58,6 +68,18 @@ function App() {
               <AddMovieForm
                 onAdd={handleAddMovie}
                 onClose={() => setShowForm(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        {editingMovie && (
+          <div className="modal-overlay" onClick={() => setEditingMovieId(null)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <AddMovieForm
+                initialMovie={editingMovie}
+                onUpdate={handleUpdateMovie}
+                onClose={() => setEditingMovieId(null)}
               />
             </div>
           </div>
@@ -102,6 +124,13 @@ function App() {
                         >
                           {movie.favorite ? '♥' : '♡'}
                         </button>
+                        <button
+                          className="edit-btn"
+                          onClick={() => setEditingMovieId(movie.id)}
+                          aria-label="Edit movie"
+                        >
+                          ✎
+                        </button>
                       </div>
                       <div className="card-meta">
                         <span className="card-genre">{movie.genre}</span>
@@ -132,6 +161,7 @@ function App() {
                 movie={selectedMovie}
                 onClose={() => setSelectedMovieId(null)}
                 onNoteChange={handleNoteChange}
+                onEdit={() => setEditingMovieId(selectedMovie.id)}
               />
             )}
           </div>
