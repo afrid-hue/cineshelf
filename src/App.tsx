@@ -7,6 +7,11 @@ import './App.css'
 function App() {
   const [movies, setMovies] = useState<Movie[]>([])
   const [showForm, setShowForm] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const filteredMovies = movies.filter((m) =>
+    m.title.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   return (
     <div className="app">
@@ -32,22 +37,49 @@ function App() {
         )}
 
         {movies.length > 0 && (
-          <ul className="movie-list-minimal">
-            {movies.map((m) => (
-              <li key={m.id}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span>{m.title}</span>
-                  <StarRating
-                    rating={m.rating}
-                    onRate={(r) =>
-                      setMovies((prev) => prev.map((movie) => (movie.id === m.id ? { ...movie, rating: r } : movie)))
-                    }
-                  />
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+  <div className="movie-list-container">
+    <input
+      type="text"
+      placeholder="Search movies..."
+      className="search-input"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+    />
+
+    {filteredMovies.length > 0 ? (
+      <ul className="movie-list-minimal">
+        {filteredMovies.map((m) => (
+          <li key={m.id}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <span>{m.title}</span>
+
+              <StarRating
+                rating={m.rating}
+                onRate={(r) =>
+                  setMovies((prev) =>
+                    prev.map((movie) =>
+                      movie.id === m.id
+                        ? { ...movie, rating: r }
+                        : movie
+                    )
+                  )
+                }
+              />
+            </div>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p className="no-movies-message">No movies found</p>
+    )}
+  </div>
+)}
       </main>
     </div>
   )
