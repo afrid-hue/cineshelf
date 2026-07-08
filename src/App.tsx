@@ -35,7 +35,9 @@ function App() {
           </div>
         )}
 
-        {movies.length > 0 && (
+        {movies.length === 0 ? (
+          <p className="empty-state">No movies yet — add one to get started!</p>
+        ) : (
           <div className="movie-list-container">
             <input
               type="text"
@@ -45,9 +47,24 @@ function App() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             {filteredMovies.length > 0 ? (
-              <ul className="movie-list-minimal">
+              <ul className="movie-list">
                 {filteredMovies.map((m) => (
-                  <li key={m.id}>{m.title}</li>
+                  <li key={m.id} className="movie-card">
+                    <div className="card-top">
+                      <h3 className="card-title">{m.title}</h3>
+                      <span className={`status-badge ${m.status}`}>
+                        {m.status === 'watched' ? 'Watched' : 'To Watch'}
+                      </span>
+                    </div>
+                    <div className="card-meta">
+                      <span className="card-genre">{m.genre}</span>
+                      <span className="card-stars">
+                        {[1, 2, 3, 4, 5].map((n) => (
+                          <span key={n} className={n <= m.rating ? 'star filled' : 'star'}>★</span>
+                        ))}
+                      </span>
+                    </div>
+                  </li>
                 ))}
               </ul>
             ) : (
