@@ -57,7 +57,12 @@ function App() {
                       </span>
                     </div>
                     <div className="card-meta">
-                      <span className="card-genre">{m.genre}</span>
+                      <div className="card-details">
+                        <span className="card-genre">{m.genre}</span>
+                        {m.progress ? (
+                          <span className="card-progress">Progress: {m.progress}</span>
+                        ) : null}
+                      </div>
                       <StarRating
                         className="card-stars"
                         rating={m.rating}
@@ -69,7 +74,7 @@ function App() {
                                 : movie
                             )
                           )
-                       }
+                        }
                       />
                     </div>
                   </li>
