@@ -1,12 +1,17 @@
 import { useState } from 'react'
 import type { Movie } from './types'
 import AddMovieForm from './AddMovieForm'
+<<<<<<< HEAD
 import MovieDetail from './MovieDetail'
+=======
+import StarRating from './StarRating'
+>>>>>>> origin/main
 import './App.css'
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([])
   const [showForm, setShowForm] = useState(false)
+<<<<<<< HEAD
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null)
 
   const selectedMovie =
@@ -15,6 +20,20 @@ function App() {
   function handleAddMovie(movie: Movie) {
     setMovies((prev) => [...prev, movie])
     setSelectedMovieId(movie.id)
+=======
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const filteredMovies = movies.filter((m) =>
+    m.title.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const toggleFavorite = (id: string) => {
+    setMovies((prevMovies) =>
+      prevMovies.map((m) =>
+        m.id === id ? { ...m, favorite: !m.favorite } : m
+      )
+    )
+>>>>>>> origin/main
   }
 
   return (
@@ -48,6 +67,7 @@ function App() {
             </div>
           </div>
         )}
+<<<<<<< HEAD
 
         {movies.length > 0 && (
           <div className="movie-layout">
@@ -73,6 +93,57 @@ function App() {
                 movie={selectedMovie}
                 onClose={() => setSelectedMovieId(null)}
               />
+=======
+        {movies.length === 0 ? (
+          <p className="empty-state">No movies yet — add one to get started!</p>
+        ) : (
+          <div className="movie-list-container">
+            <input
+              type="text"
+              placeholder="Search movies..."
+              className="search-input"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {filteredMovies.length > 0 ? (
+              <ul className="movie-list">
+                {filteredMovies.map((m) => (
+                  <li key={m.id} className="movie-card">
+                    <div className="card-top">
+                      <h3 className="card-title">{m.title}</h3>
+                      <span className={`status-badge ${m.status}`}>
+                        {m.status === 'watched' ? 'Watched' : 'To Watch'}
+                      </span>
+                      <button
+                        className={`favorite-btn ${m.favorite ? 'is-favorite' : ''}`}
+                        onClick={() => toggleFavorite(m.id)}
+                        aria-label={m.favorite ? 'Remove from favorites' : 'Add to favorites'}
+                      >
+                        {m.favorite ? '♥' : '♡'}
+                      </button>
+                    </div>
+                    <div className="card-meta">
+                      <span className="card-genre">{m.genre}</span>
+                      <StarRating
+                        className="card-stars"
+                        rating={m.rating}
+                        onRate={(r) =>
+                          setMovies((prev) =>
+                            prev.map((movie) =>
+                              movie.id === m.id
+                                ? { ...movie, rating: r }
+                                : movie
+                            )
+                          )
+                       }
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="no-movies-message">No movies found</p>
+>>>>>>> origin/main
             )}
           </div>
         )}

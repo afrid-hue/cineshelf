@@ -1,5 +1,14 @@
 .app {
   min-height: 100vh;
+  --card-green: #16a34a;
+  --card-green-bg: rgba(22, 163, 74, 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+  .app {
+    --card-green: #4ade80;
+    --card-green-bg: rgba(74, 222, 128, 0.12);
+  }
 }
 
 /* ---------- HEADER ---------- */
@@ -34,18 +43,18 @@
   padding: 14px;
   font-size: 15px;
   font-weight: 600;
-  border: 1px dashed var(--border);
+  border: 2px dashed var(--border);
   border-radius: 10px;
-  background: transparent;
+  background: var(--card-bg);
   color: var(--text);
   cursor: pointer;
-  transition: background 150ms ease, color 150ms ease;
+  transition: border-color 150ms ease, color 150ms ease;
   margin-bottom: 24px;
 }
 
 .open-form-btn:hover {
-  background: var(--card-bg);
-  color: var(--text-h);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 /* ---------- MODAL ---------- */
@@ -179,6 +188,7 @@
   transform: scale(1.12);
 }
 
+<<<<<<< HEAD
 /* ---------- MOVIE LIST ---------- */
 .movie-layout {
   display: grid;
@@ -213,6 +223,137 @@
 
 .movie-list-minimal li:last-child {
   border-bottom: none;
+=======
+/* ---------- EMPTY STATE ---------- */
+.empty-state {
+  text-align: center;
+  color: var(--text);
+  padding: 48px 0;
+  font-size: 15px;
+}
+
+/* ---------- MOVIE CARDS ---------- */
+.movie-list {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.movie-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  transition: border-color 150ms ease;
+}
+.movie-card:hover {
+  border-color: var(--accent);
+}
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.card-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-h);
+  line-height: 1.2;
+}
+.status-badge {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 12px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+.status-badge.watched {
+  background: var(--card-green-bg);
+  color: var(--card-green);
+}
+.status-badge.towatch {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.card-genre {
+  font-size: 13px;
+  color: var(--text);
+}
+.card-stars {
+  display: flex;
+  gap: 2px;
+  font-size: 16px;
+  line-height: 1;
+}
+.card-stars .star {
+  color: var(--border);
+}
+.card-stars .star.filled {
+  color: var(--accent);
+}
+.favorite-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 150ms ease, color 150ms ease;
+}
+.favorite-btn:hover {
+  transform: scale(1.2);
+}
+.favorite-btn.is-favorite {
+  color: #ff4b4b;
+}
+
+/* ---------- SEARCH INPUT ---------- */
+.search-input {
+  display: block;
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text-h);
+  border-radius: 7px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  margin-bottom: 16px;
+  transition: border-color 150ms ease;
+}
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.search-input::placeholder {
+  color: var(--text);
+  opacity: 0.6;
+}
+
+/* ---------- NO MOVIES MESSAGE ---------- */
+.no-movies-message {
+  text-align: center;
+  color: var(--text);
+  font-size: 14px;
+  margin-top: 24px;
+>>>>>>> origin/main
 }
 
 .movie-list-minimal li:hover,
