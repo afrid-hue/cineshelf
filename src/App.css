@@ -166,7 +166,7 @@
 /* ---------- MOVIE LIST (minimal — PR 2 gets cards) ---------- */
 .movie-list-minimal {
   list-style: none;
-  margin: 24px 0 0;
+  margin: 16px 0 0;
   padding: 0;
 }
 .movie-list-minimal li {
@@ -199,4 +199,35 @@
 }
 .favorite-btn.is-favorite {
   color: #ff4b4b;
+}
+
+/* ---------- SEARCH INPUT ---------- */
+.search-input {
+  display: block;
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text-h);
+  border-radius: 7px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  margin-bottom: 16px;
+  transition: border-color 150ms ease;
+}
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.search-input::placeholder {
+  color: var(--text);
+  opacity: 0.6;
+}
+
+/* ---------- NO MOVIES MESSAGE ---------- */
+.no-movies-message {
+  text-align: center;
+  color: var(--text);
+  font-size: 14px;
+  margin-top: 24px;
 }
