@@ -35,51 +35,51 @@ function App() {
             </div>
           </div>
         )}
-
-        {movies.length > 0 && (
-  <div className="movie-list-container">
-    <input
-      type="text"
-      placeholder="Search movies..."
-      className="search-input"
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-    />
-
-    {filteredMovies.length > 0 ? (
-      <ul className="movie-list-minimal">
-        {filteredMovies.map((m) => (
-          <li key={m.id}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <span>{m.title}</span>
-
-              <StarRating
-                rating={m.rating}
-                onRate={(r) =>
-                  setMovies((prev) =>
-                    prev.map((movie) =>
-                      movie.id === m.id
-                        ? { ...movie, rating: r }
-                        : movie
-                    )
-                  )
-                }
-              />
-            </div>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <p className="no-movies-message">No movies found</p>
-    )}
-  </div>
-)}
+        {movies.length === 0 ? (
+          <p className="empty-state">No movies yet — add one to get started!</p>
+        ) : (
+          <div className="movie-list-container">
+            <input
+              type="text"
+              placeholder="Search movies..."
+              className="search-input"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {filteredMovies.length > 0 ? (
+              <ul className="movie-list">
+                {filteredMovies.map((m) => (
+                  <li key={m.id} className="movie-card">
+                    <div className="card-top">
+                      <h3 className="card-title">{m.title}</h3>
+                      <span className={`status-badge ${m.status}`}>
+                        {m.status === 'watched' ? 'Watched' : 'To Watch'}
+                      </span>
+                    </div>
+                    <div className="card-meta">
+                      <span className="card-genre">{m.genre}</span>
+                      <StarRating
+                        className="card-stars"
+                        rating={m.rating}
+                        onRate={(r) =>
+                          setMovies((prev) =>
+                            prev.map((movie) =>
+                              movie.id === m.id
+                                ? { ...movie, rating: r }
+                                : movie
+                            )
+                          )
+                       }
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="no-movies-message">No movies found</p>
+            )}
+          </div>
+        )}
       </main>
     </div>
   )

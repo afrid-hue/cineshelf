@@ -1,5 +1,14 @@
 .app {
   min-height: 100vh;
+  --card-green: #16a34a;
+  --card-green-bg: rgba(22, 163, 74, 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+  .app {
+    --card-green: #4ade80;
+    --card-green-bg: rgba(74, 222, 128, 0.12);
+  }
 }
 
 /* ---------- HEADER ---------- */
@@ -32,17 +41,17 @@
   padding: 14px;
   font-size: 15px;
   font-weight: 600;
-  border: 1px dashed var(--border);
+  border: 2px dashed var(--border);
   border-radius: 10px;
-  background: transparent;
+  background: var(--card-bg);
   color: var(--text);
   cursor: pointer;
-  transition: background 150ms ease, color 150ms ease;
+  transition: border-color 150ms ease, color 150ms ease;
   margin-bottom: 24px;
 }
 .open-form-btn:hover {
-  background: var(--card-bg);
-  color: var(--text-h);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 /* ---------- MODAL ---------- */
@@ -163,20 +172,85 @@
   transform: scale(1.12);
 }
 
-/* ---------- MOVIE LIST (minimal — PR 2 gets cards) ---------- */
-.movie-list-minimal {
+/* ---------- EMPTY STATE ---------- */
+.empty-state {
+  text-align: center;
+  color: var(--text);
+  padding: 48px 0;
+  font-size: 15px;
+}
+
+/* ---------- MOVIE CARDS ---------- */
+.movie-list {
   list-style: none;
   margin: 16px 0 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
-.movie-list-minimal li {
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--border);
-  font-size: 14px;
+.movie-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  transition: border-color 150ms ease;
+}
+.movie-card:hover {
+  border-color: var(--accent);
+}
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.card-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
   color: var(--text-h);
+  line-height: 1.2;
 }
-.movie-list-minimal li:last-child {
-  border-bottom: none;
+.status-badge {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 12px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+.status-badge.watched {
+  background: var(--card-green-bg);
+  color: var(--card-green);
+}
+.status-badge.towatch {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.card-genre {
+  font-size: 13px;
+  color: var(--text);
+}
+.card-stars {
+  display: flex;
+  gap: 2px;
+  font-size: 16px;
+  line-height: 1;
+}
+.card-stars .star {
+  color: var(--border);
+}
+.card-stars .star.filled {
+  color: var(--accent);
 }
 
 /* ---------- SEARCH INPUT ---------- */
