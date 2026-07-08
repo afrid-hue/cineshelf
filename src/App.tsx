@@ -13,6 +13,14 @@ function App() {
     m.title.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
+  const toggleFavorite = (id: string) => {
+    setMovies((prevMovies) =>
+      prevMovies.map((m) =>
+        m.id === id ? { ...m, favorite: !m.favorite } : m
+      )
+    )
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -55,6 +63,13 @@ function App() {
                       <span className={`status-badge ${m.status}`}>
                         {m.status === 'watched' ? 'Watched' : 'To Watch'}
                       </span>
+                      <button
+                        className={`favorite-btn ${m.favorite ? 'is-favorite' : ''}`}
+                        onClick={() => toggleFavorite(m.id)}
+                        aria-label={m.favorite ? 'Remove from favorites' : 'Add to favorites'}
+                      >
+                        {m.favorite ? '♥' : '♡'}
+                      </button>
                     </div>
                     <div className="card-meta">
                       <span className="card-genre">{m.genre}</span>
