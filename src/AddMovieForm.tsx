@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Movie, Status } from './types'
+import EmojiLabelPicker from './EmojiLabelPicker'
 
 interface Props {
   onAdd?: (movie: Movie) => void
@@ -20,6 +21,7 @@ export default function AddMovieForm({ onAdd, onUpdate, initialMovie, onClose }:
   const [rating, setRating] = useState(initialMovie?.rating ?? 0)
   const [status, setStatus] = useState<Status>(initialMovie?.status ?? 'towatch')
   const [progress, setProgress] = useState(initialMovie?.progress ?? '')
+  const [emojiLabel, setEmojiLabel] = useState(initialMovie?.emojiLabel ?? '')
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -35,6 +37,7 @@ export default function AddMovieForm({ onAdd, onUpdate, initialMovie, onClose }:
         rating,
         status,
         progress: normalizedProgress || undefined,
+        emojiLabel: emojiLabel || undefined,
       })
     } else if (onAdd) {
       onAdd({
@@ -44,6 +47,7 @@ export default function AddMovieForm({ onAdd, onUpdate, initialMovie, onClose }:
         rating,
         status,
         progress: normalizedProgress || undefined,
+        emojiLabel: emojiLabel || undefined,
       })
     }
 
@@ -114,6 +118,8 @@ export default function AddMovieForm({ onAdd, onUpdate, initialMovie, onClose }:
           placeholder="e.g. S2 E4"
         />
       </label>
+
+      <EmojiLabelPicker value={emojiLabel} onChange={setEmojiLabel} />
 
       <button type="submit">{isEdit ? 'Save Changes' : 'Add Movie'}</button>
     </form>

@@ -191,13 +191,20 @@ function App() {
                   {filteredMovies.map((movie) => (
                     <li key={movie.id} className="movie-card">
                       <div className="card-top">
-                        <h3
-                          className="card-title"
-                          style={{ cursor: 'pointer' }}
-                          onClick={() => setSelectedMovieId(movie.id)}
-                        >
-                          {movie.title}
-                        </h3>
+                        <div className="card-title-wrap">
+                          <h3
+                            className="card-title"
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => setSelectedMovieId(movie.id)}
+                          >
+                            {movie.title}
+                          </h3>
+                          {movie.emojiLabel && (
+                            <span className="emoji-tag" aria-label={`Emoji tag: ${movie.emojiLabel}`}>
+                              {movie.emojiLabel}
+                            </span>
+                          )}
+                        </div>
 
                         <span className={`status-badge ${movie.status}`}>
                           {movie.status === 'watched'
