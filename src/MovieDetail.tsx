@@ -5,9 +5,10 @@ interface MovieDetailProps {
   movie: Movie
   onClose: () => void
   onNoteChange: (movieId: string, note: string) => void
+  onEdit: () => void
 }
 
-export default function MovieDetail({ movie, onClose, onNoteChange }: MovieDetailProps) {
+export default function MovieDetail({ movie, onClose, onNoteChange, onEdit }: MovieDetailProps) {
   const statusLabel = movie.status === 'watched' ? 'Watched' : 'To Watch'
   const [isEditingNote, setIsEditingNote] = useState(false)
   const [draftNote, setDraftNote] = useState(movie.note ?? '')
@@ -31,9 +32,14 @@ export default function MovieDetail({ movie, onClose, onNoteChange }: MovieDetai
           <p className="detail-eyebrow">Selected movie</p>
           <h2>{movie.title}</h2>
         </div>
-        <button type="button" className="detail-close" onClick={onClose} aria-label="Close details">
-          ✕
-        </button>
+        <div className="detail-actions">
+          <button type="button" className="detail-edit-btn" onClick={onEdit} aria-label="Edit movie">
+            ✎ Edit
+          </button>
+          <button type="button" className="detail-close" onClick={onClose} aria-label="Close details">
+            ✕
+          </button>
+        </div>
       </div>
 
       <div className="detail-grid">

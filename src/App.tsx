@@ -1,35 +1,76 @@
-import { useState } from 'react'
-import type { Movie } from './types'
+import { useState, useEffect } from 'react'
+import type { Movie, Status, Collection } from './types'
 import AddMovieForm from './AddMovieForm'
 import SummaryBar from './SummaryBar'
 import MovieDetail from './MovieDetail'
 import StarRating from './StarRating'
 import CollectionManager from './CollectionManager'
-import type { Collection } from './types'
+import StatusToggle from './StatusToggle'
+import ThemeToggle from './ThemeToggle'
 import './App.css'
+
+const STATUS_KEY = 'cineshelf-statuses'
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([])
   const [collections, setCollections] = useState<Collection[]>([])
   const [showForm, setShowForm] = useState(false)
+  const [editingMovieId, setEditingMovieId] = useState<string | null>(null)
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCollectionId, setSelectedCollectionId] = useState<string | null>(null)
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('cineshelf-theme')
+    if (saved === 'light' || saved === 'dark') return saved
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  })
 
-  const selectedMovie =
-    movies.find((movie) => movie.id === selectedMovieId) ?? null
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('cineshelf-theme', theme)
+  }, [theme])
+
+  const [genreFilter, setGenreFilter] = useState('All')
+  const [statusFilter, setStatusFilter] = useState('All')
+
+  const genres = ['All', ...new Set(movies.map((m) => m.genre))]
+
+  useEffect(() => {
+    const saved = localStorage.getItem(STATUS_KEY)
+    if (!saved) return
+    const statuses = JSON.parse(saved) as Record<string, Status>
+    setMovies((prev) =>
+      prev.map((m) => ({
+        ...m,
+        status: statuses[m.id] ?? m.status,
+      }))
+    )
+  }, [])
+
+  useEffect(() => {
+    const statuses: Record<string, Status> = {}
+    movies.forEach((m) => {
+      statuses[m.id] = m.status
+    })
+    localStorage.setItem(STATUS_KEY, JSON.stringify(statuses))
+  }, [movies])
+
+  const selectedMovie = movies.find((movie) => movie.id === selectedMovieId) ?? null
+  const editingMovie = movies.find((movie) => movie.id === editingMovieId) ?? null
 
   const filteredMovies = movies.filter((movie) => {
     const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesGenre = genreFilter === 'All' || movie.genre === genreFilter
+    const matchesStatus = statusFilter === 'All' || movie.status === statusFilter
 
     if (!selectedCollectionId) {
-      return matchesSearch
+      return matchesSearch && matchesGenre && matchesStatus
     }
 
     const collection = collections.find((item) => item.id === selectedCollectionId)
     const inCollection = collection?.movieIds.includes(movie.id) ?? false
 
-    return matchesSearch && inCollection
+    return matchesSearch && matchesGenre && matchesStatus && inCollection
   })
 
   function handleAddMovie(movie: Movie) {
@@ -37,10 +78,30 @@ function App() {
     setSelectedMovieId(movie.id)
   }
 
+  function handleUpdateMovie(movie: Movie) {
+    setMovies((prev) =>
+      prev.map((m) => (m.id === movie.id ? movie : m))
+    )
+  }
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))
+  }
+
   const toggleFavorite = (id: string) => {
     setMovies((prevMovies) =>
       prevMovies.map((movie) =>
         movie.id === id ? { ...movie, favorite: !movie.favorite } : movie
+      )
+    )
+  }
+
+  const toggleStatus = (id: string) => {
+    setMovies((prevMovies) =>
+      prevMovies.map((movie) =>
+        movie.id === id
+          ? { ...movie, status: movie.status === 'watched' ? 'towatch' : 'watched' }
+          : movie
       )
     )
   }
@@ -104,7 +165,10 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>🎬 CineShelf</h1>
+        <div className="header-row">
+          <h1>🎬 CineShelf</h1>
+          <ThemeToggle theme={theme} onToggle={toggleTheme} />
+        </div>
         <p className="tagline">Your personal movie &amp; series shelf</p>
       </header>
 
@@ -124,6 +188,18 @@ function App() {
           </div>
         )}
 
+        {editingMovie && (
+          <div className="modal-overlay" onClick={() => setEditingMovieId(null)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <AddMovieForm
+                initialMovie={editingMovie}
+                onUpdate={handleUpdateMovie}
+                onClose={() => setEditingMovieId(null)}
+              />
+            </div>
+          </div>
+        )}
+
         <SummaryBar movies={movies} />
 
         <CollectionManager
@@ -137,7 +213,9 @@ function App() {
         />
 
         {movies.length === 0 ? (
-          <p className="empty-state">No movies yet — add one to get started!</p>
+          <p className="empty-state">
+            No movies yet — add one to get started!
+          </p>
         ) : (
           <div className="movie-layout">
             <div className="movie-list-container">
@@ -148,7 +226,32 @@ function App() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-
+              <div className="filters-row">
+                <label className="filter-group">
+                  <span className="filter-label">Genre</span>
+                  <select
+                    className="filter-select"
+                    value={genreFilter}
+                    onChange={(e) => setGenreFilter(e.target.value)}
+                  >
+                    {genres.map((g) => (
+                      <option key={g} value={g}>{g}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="filter-group">
+                  <span className="filter-label">Status</span>
+                  <select
+                    className="filter-select"
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                  >
+                    <option value="All">All</option>
+                    <option value="watched">Watched</option>
+                    <option value="towatch">To Watch</option>
+                  </select>
+                </label>
+              </div>
               {filteredMovies.length > 0 ? (
                 <ul className="movie-list">
                   {filteredMovies.map((movie) => (
@@ -161,21 +264,46 @@ function App() {
                         >
                           {movie.title}
                         </h3>
+
                         <span className={`status-badge ${movie.status}`}>
-                          {movie.status === 'watched' ? 'Watched' : 'To Watch'}
+                          {movie.status === 'watched'
+                            ? 'Watched'
+                            : 'To Watch'}
                         </span>
+
                         <button
-                          className={`favorite-btn ${movie.favorite ? 'is-favorite' : ''}`}
+                          className={`favorite-btn ${
+                            movie.favorite ? 'is-favorite' : ''
+                          }`}
                           onClick={() => toggleFavorite(movie.id)}
                           aria-label={
-                            movie.favorite ? 'Remove from favorites' : 'Add to favorites'
+                            movie.favorite
+                              ? 'Remove from favorites'
+                              : 'Add to favorites'
                           }
                         >
                           {movie.favorite ? '♥' : '♡'}
                         </button>
+                        <button
+                          className="edit-btn"
+                          onClick={() => setEditingMovieId(movie.id)}
+                          aria-label="Edit movie"
+                        >
+                          ✎
+                        </button>
                       </div>
+
                       <div className="card-meta">
-                        <span className="card-genre">{movie.genre}</span>
+                        <div className="card-details">
+                          <span className="card-genre">{movie.genre}</span>
+                            {movie.progress && (
+                          <span className="card-progress">Progress: {movie.progress}</span>
+                            )}
+                          <StatusToggle
+                            status={movie.status}
+                            onToggle={() => toggleStatus(movie.id)}
+                          />
+                        </div>
                         <StarRating
                           className="card-stars"
                           rating={movie.rating}
@@ -203,6 +331,7 @@ function App() {
                 movie={selectedMovie}
                 onClose={() => setSelectedMovieId(null)}
                 onNoteChange={handleNoteChange}
+                onEdit={() => setEditingMovieId(selectedMovie.id)}
               />
             )}
           </div>
