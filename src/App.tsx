@@ -13,6 +13,7 @@ const STATUS_KEY = 'cineshelf-statuses'
 function App() {
   const [movies, setMovies] = useState<Movie[]>([])
   const [showForm, setShowForm] = useState(false)
+  const [editingMovieId, setEditingMovieId] = useState<string | null>(null)
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -54,6 +55,9 @@ function App() {
   const selectedMovie =
     movies.find((movie) => movie.id === selectedMovieId) ?? null
 
+  const editingMovie =
+    movies.find((movie) => movie.id === editingMovieId) ?? null
+
   const filteredMovies = movies.filter((m) => {
     const matchesSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesGenre = genreFilter === 'All' || m.genre === genreFilter
@@ -66,16 +70,9 @@ function App() {
     setSelectedMovieId(movie.id)
   }
 
-  const toggleStatus = (id: string) => {
+  function handleUpdateMovie(movie: Movie) {
     setMovies((prev) =>
-      prev.map((movie) =>
-        movie.id === id
-          ? {
-              ...movie,
-              status: movie.status === 'watched' ? 'towatch' : 'watched',
-            }
-          : movie
-      )
+      prev.map((m) => (m.id === movie.id ? movie : m))
     )
   }
 
@@ -87,6 +84,16 @@ function App() {
     setMovies((prevMovies) =>
       prevMovies.map((movie) =>
         movie.id === id ? { ...movie, favorite: !movie.favorite } : movie
+      )
+    )
+  }
+
+  const toggleStatus = (id: string) => {
+    setMovies((prevMovies) =>
+      prevMovies.map((movie) =>
+        movie.id === id
+          ? { ...movie, status: movie.status === 'watched' ? 'towatch' : 'watched' }
+          : movie
       )
     )
   }
@@ -120,6 +127,18 @@ function App() {
               <AddMovieForm
                 onAdd={handleAddMovie}
                 onClose={() => setShowForm(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        {editingMovie && (
+          <div className="modal-overlay" onClick={() => setEditingMovieId(null)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <AddMovieForm
+                initialMovie={editingMovie}
+                onUpdate={handleUpdateMovie}
+                onClose={() => setEditingMovieId(null)}
               />
             </div>
           </div>
@@ -199,6 +218,13 @@ function App() {
                         >
                           {movie.favorite ? '♥' : '♡'}
                         </button>
+                        <button
+                          className="edit-btn"
+                          onClick={() => setEditingMovieId(movie.id)}
+                          aria-label="Edit movie"
+                        >
+                          ✎
+                        </button>
                       </div>
 
                       <div className="card-meta">
@@ -239,6 +265,7 @@ function App() {
                 movie={selectedMovie}
                 onClose={() => setSelectedMovieId(null)}
                 onNoteChange={handleNoteChange}
+                onEdit={() => setEditingMovieId(selectedMovie.id)}
               />
             )}
           </div>

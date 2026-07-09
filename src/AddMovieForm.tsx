@@ -2,7 +2,9 @@ import { useState } from 'react'
 import type { Movie, Status } from './types'
 
 interface Props {
-  onAdd: (movie: Movie) => void
+  onAdd?: (movie: Movie) => void
+  onUpdate?: (movie: Movie) => void
+  initialMovie?: Movie
   onClose: () => void
 }
 
@@ -11,12 +13,13 @@ const GENRES = [
   'Romance', 'Thriller', 'Documentary', 'Animation', 'Fantasy'
 ]
 
-export default function AddMovieForm({ onAdd, onClose }: Props) {
-  const [title, setTitle] = useState('')
-  const [genre, setGenre] = useState(GENRES[0])
-  const [rating, setRating] = useState(0)
-  const [status, setStatus] = useState<Status>('towatch')
-  const [progress, setProgress] = useState('')
+export default function AddMovieForm({ onAdd, onUpdate, initialMovie, onClose }: Props) {
+  const isEdit = !!initialMovie
+  const [title, setTitle] = useState(initialMovie?.title ?? '')
+  const [genre, setGenre] = useState(initialMovie?.genre ?? GENRES[0])
+  const [rating, setRating] = useState(initialMovie?.rating ?? 0)
+  const [status, setStatus] = useState<Status>(initialMovie?.status ?? 'towatch')
+  const [progress, setProgress] = useState(initialMovie?.progress ?? '')
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -24,14 +27,25 @@ export default function AddMovieForm({ onAdd, onClose }: Props) {
 
     const normalizedProgress = progress.trim()
 
-    onAdd({
-      id: crypto.randomUUID(),
-      title: title.trim(),
-      genre,
-      rating,
-      status,
-      progress: normalizedProgress || undefined,
-    })
+    if (isEdit && onUpdate && initialMovie) {
+      onUpdate({
+        ...initialMovie,
+        title: title.trim(),
+        genre,
+        rating,
+        status,
+        progress: normalizedProgress || undefined,
+      })
+    } else if (onAdd) {
+      onAdd({
+        id: crypto.randomUUID(),
+        title: title.trim(),
+        genre,
+        rating,
+        status,
+        progress: normalizedProgress || undefined,
+      })
+    }
 
     onClose()
   }
@@ -39,7 +53,7 @@ export default function AddMovieForm({ onAdd, onClose }: Props) {
   return (
     <form onSubmit={handleSubmit} className="add-form">
       <div className="add-form-header">
-        <h2>Add a Movie</h2>
+        <h2>{isEdit ? 'Edit Movie' : 'Add a Movie'}</h2>
         <button type="button" className="close-btn" onClick={onClose} aria-label="Close">✕</button>
       </div>
 
@@ -101,7 +115,7 @@ export default function AddMovieForm({ onAdd, onClose }: Props) {
         />
       </label>
 
-      <button type="submit">Add Movie</button>
+      <button type="submit">{isEdit ? 'Save Changes' : 'Add Movie'}</button>
     </form>
   )
 }
