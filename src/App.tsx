@@ -204,6 +204,9 @@ function App() {
                       <div className="card-meta">
                         <div className="card-details">
                           <span className="card-genre">{movie.genre}</span>
+                            {movie.progress && (
+                          <span className="card-progress">Progress: {movie.progress}</span>
+                            )}
                           <StatusToggle
                             status={movie.status}
                             onToggle={() => toggleStatus(movie.id)}
