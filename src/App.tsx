@@ -4,6 +4,8 @@ import AddMovieForm from './AddMovieForm'
 import SummaryBar from './SummaryBar'
 import MovieDetail from './MovieDetail'
 import StarRating from './StarRating'
+import StatusToggle from './StatusToggle'
+import ThemeToggle from './ThemeToggle'
 import './App.css'
 
 const STATUS_KEY = 'cineshelf-statuses'
@@ -14,6 +16,17 @@ function App() {
   const [editingMovieId, setEditingMovieId] = useState<string | null>(null)
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('cineshelf-theme')
+    if (saved === 'light' || saved === 'dark') return saved
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  })
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('cineshelf-theme', theme)
+  }, [theme])
+
   const [genreFilter, setGenreFilter] = useState('All')
   const [statusFilter, setStatusFilter] = useState('All')
 
@@ -63,10 +76,24 @@ function App() {
     )
   }
 
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))
+  }
+
   const toggleFavorite = (id: string) => {
     setMovies((prevMovies) =>
       prevMovies.map((movie) =>
         movie.id === id ? { ...movie, favorite: !movie.favorite } : movie
+      )
+    )
+  }
+
+  const toggleStatus = (id: string) => {
+    setMovies((prevMovies) =>
+      prevMovies.map((movie) =>
+        movie.id === id
+          ? { ...movie, status: movie.status === 'watched' ? 'towatch' : 'watched' }
+          : movie
       )
     )
   }
@@ -82,7 +109,10 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>🎬 CineShelf</h1>
+        <div className="header-row">
+          <h1>🎬 CineShelf</h1>
+          <ThemeToggle theme={theme} onToggle={toggleTheme} />
+        </div>
         <p className="tagline">Your personal movie &amp; series shelf</p>
       </header>
 
@@ -198,6 +228,13 @@ function App() {
                       </div>
 
                       <div className="card-meta">
+                        <div className="card-details">
+                          <span className="card-genre">{movie.genre}</span>
+                          <StatusToggle
+                            status={movie.status}
+                            onToggle={() => toggleStatus(movie.id)}
+                          />
+                        </div>
                         <StarRating
                           className="card-stars"
                           rating={movie.rating}
