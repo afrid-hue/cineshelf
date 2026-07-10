@@ -29,6 +29,7 @@ function App() {
 
   const [genreFilter, setGenreFilter] = useState('All')
   const [statusFilter, setStatusFilter] = useState('All')
+  const [ratingSort, setRatingSort] = useState('none')
 
   const genres = ['All', ...new Set(movies.map((m) => m.genre))]
 
@@ -58,12 +59,18 @@ function App() {
   const editingMovie =
     movies.find((movie) => movie.id === editingMovieId) ?? null
 
-  const filteredMovies = movies.filter((m) => {
-    const matchesSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesGenre = genreFilter === 'All' || m.genre === genreFilter
-    const matchesStatus = statusFilter === 'All' || m.status === statusFilter
-    return matchesSearch && matchesGenre && matchesStatus
-  })
+  const filteredMovies = movies
+    .filter((m) => {
+      const matchesSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesGenre = genreFilter === 'All' || m.genre === genreFilter
+      const matchesStatus = statusFilter === 'All' || m.status === statusFilter
+      return matchesSearch && matchesGenre && matchesStatus
+    })
+    .sort((a, b) => {
+      if (ratingSort === 'high') return b.rating - a.rating
+      if (ratingSort === 'low') return a.rating - b.rating
+      return 0
+    })
 
   function handleAddMovie(movie: Movie) {
     setMovies((prev) => [...prev, movie])
@@ -183,6 +190,18 @@ function App() {
                     <option value="All">All</option>
                     <option value="watched">Watched</option>
                     <option value="towatch">To Watch</option>
+                  </select>
+                </label>
+                <label className="filter-group">
+                  <span className="filter-label">Sort by Rating</span>
+                  <select
+                    className="filter-select"
+                    value={ratingSort}
+                    onChange={(e) => setRatingSort(e.target.value)}
+                  >
+                    <option value="none">None</option>
+                    <option value="high">Top Rated</option>
+                    <option value="low">Lowest Rated</option>
                   </select>
                 </label>
               </div>
