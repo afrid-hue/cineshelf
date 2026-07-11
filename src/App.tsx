@@ -6,6 +6,7 @@ import MovieDetail from './MovieDetail'
 import StarRating from './StarRating'
 import StatusToggle from './StatusToggle'
 import ThemeToggle from './ThemeToggle'
+import ContinueWatchingRow from './ContinueWatchingRow'
 import './App.css'
 
 const STATUS_KEY = 'cineshelf-statuses'
@@ -145,6 +146,11 @@ function App() {
         )}
 
         <SummaryBar movies={movies} />
+
+        <ContinueWatchingRow
+          movies={movies}
+          onSelectMovie={setSelectedMovieId}
+        />
 
         {movies.length === 0 ? (
           <p className="empty-state">
