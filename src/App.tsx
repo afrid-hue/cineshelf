@@ -7,6 +7,7 @@ import StarRating from './StarRating'
 import CollectionManager from './CollectionManager'
 import StatusToggle from './StatusToggle'
 import ThemeToggle from './ThemeToggle'
+import ConfirmDialog from './ConfirmDialog'
 import ContinueWatchingRow from './ContinueWatchingRow'
 import './App.css'
 
@@ -18,6 +19,7 @@ function App() {
   const [showForm, setShowForm] = useState(false)
   const [editingMovieId, setEditingMovieId] = useState<string | null>(null)
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null)
+  const [deletingMovieId, setDeletingMovieId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCollectionId, setSelectedCollectionId] = useState<string | null>(null)
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -81,6 +83,8 @@ function App() {
       return 0
     })
 
+  const deletingMovie =
+    movies.find((movie) => movie.id === deletingMovieId) ?? null
 
   function handleAddMovie(movie: Movie) {
     setMovies((prev) => [...prev, movie])
@@ -121,6 +125,15 @@ function App() {
         movie.id === movieId ? { ...movie, note } : movie
       )
     )
+  }
+
+  const handleDelete = () => {
+    if (!deletingMovieId) return
+    setMovies((prev) => prev.filter((m) => m.id !== deletingMovieId))
+    if (selectedMovieId === deletingMovieId) {
+      setSelectedMovieId(null)
+    }
+    setDeletingMovieId(null)
   }
 
   const handleCreateCollection = (name: string) => {
@@ -324,6 +337,13 @@ function App() {
                         >
                           ✎
                         </button>
+                        <button
+                          className="delete-btn"
+                          onClick={() => setDeletingMovieId(movie.id)}
+                          aria-label="Delete movie"
+                        >
+                          ✕
+                        </button>
                       </div>
 
                       <div className="card-meta">
@@ -365,11 +385,21 @@ function App() {
                 onClose={() => setSelectedMovieId(null)}
                 onNoteChange={handleNoteChange}
                 onEdit={() => setEditingMovieId(selectedMovie.id)}
+                onDelete={() => setDeletingMovieId(selectedMovie.id)}
               />
             )}
           </div>
         )}
       </main>
+
+      {deletingMovie && (
+        <ConfirmDialog
+          title="Delete movie"
+          message={`Are you sure you want to delete "${deletingMovie.title}"? This action cannot be undone.`}
+          onConfirm={handleDelete}
+          onCancel={() => setDeletingMovieId(null)}
+        />
+      )}
     </div>
   )
 }
