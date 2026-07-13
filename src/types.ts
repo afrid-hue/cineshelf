@@ -26,3 +26,9 @@ export interface Movie {
   favorite?: boolean // Mubashira — favorites toggle
   note?: string // Jithya — notes per movie
 }
+
+export interface Collection {
+  id: string
+  name: string
+  movieIds: string[]
+}
