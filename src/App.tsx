@@ -59,11 +59,6 @@ function App() {
   const selectedMovie = movies.find((movie) => movie.id === selectedMovieId) ?? null
   const editingMovie = movies.find((movie) => movie.id === editingMovieId) ?? null
 
-  const filteredMovies = movies.filter((movie) => {
-    const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesGenre = genreFilter === 'All' || movie.genre === genreFilter
-    const matchesStatus = statusFilter === 'All' || movie.status === statusFilter
-
   const filteredMovies = movies
     .filter((movie) => {
       const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase())
