@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import type { Movie, Status } from './types'
+import type { Movie, Status, Collection } from './types'
 import AddMovieForm from './AddMovieForm'
 import SummaryBar from './SummaryBar'
 import MovieDetail from './MovieDetail'
 import StarRating from './StarRating'
+import CollectionManager from './CollectionManager'
 import StatusToggle from './StatusToggle'
 import ThemeToggle from './ThemeToggle'
 import './App.css'
@@ -12,10 +13,12 @@ const STATUS_KEY = 'cineshelf-statuses'
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([])
+  const [collections, setCollections] = useState<Collection[]>([])
   const [showForm, setShowForm] = useState(false)
   const [editingMovieId, setEditingMovieId] = useState<string | null>(null)
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string | null>(null)
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     const saved = localStorage.getItem('cineshelf-theme')
     if (saved === 'light' || saved === 'dark') return saved
@@ -29,6 +32,7 @@ function App() {
 
   const [genreFilter, setGenreFilter] = useState('All')
   const [statusFilter, setStatusFilter] = useState('All')
+  const [ratingSort, setRatingSort] = useState('none')
 
   const genres = ['All', ...new Set(movies.map((m) => m.genre))]
 
@@ -52,18 +56,35 @@ function App() {
     localStorage.setItem(STATUS_KEY, JSON.stringify(statuses))
   }, [movies])
 
-  const selectedMovie =
-    movies.find((movie) => movie.id === selectedMovieId) ?? null
+  const selectedMovie = movies.find((movie) => movie.id === selectedMovieId) ?? null
+  const editingMovie = movies.find((movie) => movie.id === editingMovieId) ?? null
 
-  const editingMovie =
-    movies.find((movie) => movie.id === editingMovieId) ?? null
+  const filteredMovies = movies.filter((movie) => {
+    const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesGenre = genreFilter === 'All' || movie.genre === genreFilter
+    const matchesStatus = statusFilter === 'All' || movie.status === statusFilter
 
-  const filteredMovies = movies.filter((m) => {
-    const matchesSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesGenre = genreFilter === 'All' || m.genre === genreFilter
-    const matchesStatus = statusFilter === 'All' || m.status === statusFilter
-    return matchesSearch && matchesGenre && matchesStatus
-  })
+  const filteredMovies = movies
+    .filter((movie) => {
+      const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesGenre = genreFilter === 'All' || movie.genre === genreFilter
+      const matchesStatus = statusFilter === 'All' || movie.status === statusFilter
+
+      if (!selectedCollectionId) {
+        return matchesSearch && matchesGenre && matchesStatus
+      }
+
+      const collection = collections.find((item) => item.id === selectedCollectionId)
+      const inCollection = collection?.movieIds.includes(movie.id) ?? false
+
+      return matchesSearch && matchesGenre && matchesStatus && inCollection
+    })
+    .sort((a, b) => {
+      if (ratingSort === 'high') return b.rating - a.rating
+      if (ratingSort === 'low') return a.rating - b.rating
+      return 0
+    })
+
 
   function handleAddMovie(movie: Movie) {
     setMovies((prev) => [...prev, movie])
@@ -102,6 +123,54 @@ function App() {
     setMovies((prevMovies) =>
       prevMovies.map((movie) =>
         movie.id === movieId ? { ...movie, note } : movie
+      )
+    )
+  }
+
+  const handleCreateCollection = (name: string) => {
+    const trimmedName = name.trim()
+    if (!trimmedName) {
+      return
+    }
+
+    setCollections((prevCollections) => [
+      ...prevCollections,
+      {
+        id: crypto.randomUUID(),
+        name: trimmedName,
+        movieIds: [],
+      },
+    ])
+  }
+
+  const handleAssignMovieToCollection = (collectionId: string, movieId: string) => {
+    setCollections((prevCollections) =>
+      prevCollections.map((collection) => {
+        if (collection.id !== collectionId) {
+          return collection
+        }
+
+        if (collection.movieIds.includes(movieId)) {
+          return collection
+        }
+
+        return {
+          ...collection,
+          movieIds: [...collection.movieIds, movieId],
+        }
+      })
+    )
+  }
+
+  const handleRemoveMovieFromCollection = (collectionId: string, movieId: string) => {
+    setCollections((prevCollections) =>
+      prevCollections.map((collection) =>
+        collection.id === collectionId
+          ? {
+              ...collection,
+              movieIds: collection.movieIds.filter((id) => id !== movieId),
+            }
+          : collection
       )
     )
   }
@@ -146,6 +215,16 @@ function App() {
 
         <SummaryBar movies={movies} />
 
+        <CollectionManager
+          movies={movies}
+          collections={collections}
+          selectedCollectionId={selectedCollectionId}
+          onSelectCollection={setSelectedCollectionId}
+          onCreateCollection={handleCreateCollection}
+          onAssignMovieToCollection={handleAssignMovieToCollection}
+          onRemoveMovieFromCollection={handleRemoveMovieFromCollection}
+        />
+
         {movies.length === 0 ? (
           <p className="empty-state">
             No movies yet — add one to get started!
@@ -183,6 +262,18 @@ function App() {
                     <option value="All">All</option>
                     <option value="watched">Watched</option>
                     <option value="towatch">To Watch</option>
+                  </select>
+                </label>
+                <label className="filter-group">
+                  <span className="filter-label">Sort by Rating</span>
+                  <select
+                    className="filter-select"
+                    value={ratingSort}
+                    onChange={(e) => setRatingSort(e.target.value)}
+                  >
+                    <option value="none">None</option>
+                    <option value="high">Top Rated</option>
+                    <option value="low">Lowest Rated</option>
                   </select>
                 </label>
               </div>

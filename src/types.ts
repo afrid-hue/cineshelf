@@ -27,3 +27,9 @@ export interface Movie {
   note?: string // Jithya — notes per movie
   emojiLabel?: string // Tag / emoji label for movie cards
 }
+
+export interface Collection {
+  id: string
+  name: string
+  movieIds: string[]
+}
