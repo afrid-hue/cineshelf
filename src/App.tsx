@@ -32,6 +32,7 @@ function App() {
 
   const [genreFilter, setGenreFilter] = useState('All')
   const [statusFilter, setStatusFilter] = useState('All')
+  const [ratingSort, setRatingSort] = useState('none')
 
   const genres = ['All', ...new Set(movies.map((m) => m.genre))]
 
@@ -63,15 +64,27 @@ function App() {
     const matchesGenre = genreFilter === 'All' || movie.genre === genreFilter
     const matchesStatus = statusFilter === 'All' || movie.status === statusFilter
 
-    if (!selectedCollectionId) {
-      return matchesSearch && matchesGenre && matchesStatus
-    }
+  const filteredMovies = movies
+    .filter((movie) => {
+      const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesGenre = genreFilter === 'All' || movie.genre === genreFilter
+      const matchesStatus = statusFilter === 'All' || movie.status === statusFilter
 
-    const collection = collections.find((item) => item.id === selectedCollectionId)
-    const inCollection = collection?.movieIds.includes(movie.id) ?? false
+      if (!selectedCollectionId) {
+        return matchesSearch && matchesGenre && matchesStatus
+      }
 
-    return matchesSearch && matchesGenre && matchesStatus && inCollection
-  })
+      const collection = collections.find((item) => item.id === selectedCollectionId)
+      const inCollection = collection?.movieIds.includes(movie.id) ?? false
+
+      return matchesSearch && matchesGenre && matchesStatus && inCollection
+    })
+    .sort((a, b) => {
+      if (ratingSort === 'high') return b.rating - a.rating
+      if (ratingSort === 'low') return a.rating - b.rating
+      return 0
+    })
+
 
   function handleAddMovie(movie: Movie) {
     setMovies((prev) => [...prev, movie])
@@ -249,6 +262,18 @@ function App() {
                     <option value="All">All</option>
                     <option value="watched">Watched</option>
                     <option value="towatch">To Watch</option>
+                  </select>
+                </label>
+                <label className="filter-group">
+                  <span className="filter-label">Sort by Rating</span>
+                  <select
+                    className="filter-select"
+                    value={ratingSort}
+                    onChange={(e) => setRatingSort(e.target.value)}
+                  >
+                    <option value="none">None</option>
+                    <option value="high">Top Rated</option>
+                    <option value="low">Lowest Rated</option>
                   </select>
                 </label>
               </div>
