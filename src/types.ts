@@ -25,6 +25,7 @@ export interface Movie {
   progress?: string
   favorite?: boolean // Mubashira — favorites toggle
   note?: string // Jithya — notes per movie
+  emojiLabel?: string // Tag / emoji label for movie cards
 }
 
 export interface Collection {

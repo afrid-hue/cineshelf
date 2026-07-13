@@ -59,11 +59,6 @@ function App() {
   const selectedMovie = movies.find((movie) => movie.id === selectedMovieId) ?? null
   const editingMovie = movies.find((movie) => movie.id === editingMovieId) ?? null
 
-  const filteredMovies = movies.filter((movie) => {
-    const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesGenre = genreFilter === 'All' || movie.genre === genreFilter
-    const matchesStatus = statusFilter === 'All' || movie.status === statusFilter
-
   const filteredMovies = movies
     .filter((movie) => {
       const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -282,13 +277,20 @@ function App() {
                   {filteredMovies.map((movie) => (
                     <li key={movie.id} className="movie-card">
                       <div className="card-top">
-                        <h3
-                          className="card-title"
-                          style={{ cursor: 'pointer' }}
-                          onClick={() => setSelectedMovieId(movie.id)}
-                        >
-                          {movie.title}
-                        </h3>
+                        <div className="card-title-wrap">
+                          <h3
+                            className="card-title"
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => setSelectedMovieId(movie.id)}
+                          >
+                            {movie.title}
+                          </h3>
+                          {movie.emojiLabel && (
+                            <span className="emoji-tag" aria-label={`Emoji tag: ${movie.emojiLabel}`}>
+                              {movie.emojiLabel}
+                            </span>
+                          )}
+                        </div>
 
                         <span className={`status-badge ${movie.status}`}>
                           {movie.status === 'watched'
