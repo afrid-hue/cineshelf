@@ -467,6 +467,25 @@
   color: var(--accent);
 }
 
+.delete-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 150ms ease, background 150ms ease;
+}
+
+.delete-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+}
+
 /* ---------- FILTERS ROW ---------- */
 .filters-row {
   display: flex;
@@ -582,6 +601,21 @@
 }
 
 .detail-edit-btn:hover {
+  opacity: 0.85;
+}
+
+.detail-delete-btn {
+  border: none;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: opacity 150ms ease;
+}
+
+.detail-delete-btn:hover {
   opacity: 0.85;
 }
 
@@ -724,6 +758,69 @@
   justify-content: flex-end;
   gap: 8px;
   margin-top: 8px;
+}
+
+/* ---------- CONFIRM DIALOG ---------- */
+.confirm-dialog {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 26px;
+  max-width: 400px;
+  width: 100%;
+  margin: 16px;
+}
+
+.confirm-title {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.confirm-message {
+  margin: 0 0 20px;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.confirm-cancel-btn {
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 9px 16px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  transition: opacity 150ms ease;
+}
+
+.confirm-cancel-btn:hover {
+  opacity: 0.85;
+}
+
+.confirm-delete-btn {
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 9px 16px;
+  background: #ef4444;
+  color: #fff;
+  transition: opacity 150ms ease;
+}
+
+.confirm-delete-btn:hover {
+  opacity: 0.85;
 }
 
 @media (max-width: 720px) {
