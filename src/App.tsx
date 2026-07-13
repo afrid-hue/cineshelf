@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import type { Movie, Status } from './types'
+import type { Movie, Status, Collection } from './types'
 import AddMovieForm from './AddMovieForm'
 import SummaryBar from './SummaryBar'
 import MovieDetail from './MovieDetail'
 import StarRating from './StarRating'
+import CollectionManager from './CollectionManager'
 import StatusToggle from './StatusToggle'
 import ThemeToggle from './ThemeToggle'
 import './App.css'
@@ -12,10 +13,12 @@ const STATUS_KEY = 'cineshelf-statuses'
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([])
+  const [collections, setCollections] = useState<Collection[]>([])
   const [showForm, setShowForm] = useState(false)
   const [editingMovieId, setEditingMovieId] = useState<string | null>(null)
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string | null>(null)
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     const saved = localStorage.getItem('cineshelf-theme')
     if (saved === 'light' || saved === 'dark') return saved
@@ -52,17 +55,22 @@ function App() {
     localStorage.setItem(STATUS_KEY, JSON.stringify(statuses))
   }, [movies])
 
-  const selectedMovie =
-    movies.find((movie) => movie.id === selectedMovieId) ?? null
+  const selectedMovie = movies.find((movie) => movie.id === selectedMovieId) ?? null
+  const editingMovie = movies.find((movie) => movie.id === editingMovieId) ?? null
 
-  const editingMovie =
-    movies.find((movie) => movie.id === editingMovieId) ?? null
+  const filteredMovies = movies.filter((movie) => {
+    const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesGenre = genreFilter === 'All' || movie.genre === genreFilter
+    const matchesStatus = statusFilter === 'All' || movie.status === statusFilter
 
-  const filteredMovies = movies.filter((m) => {
-    const matchesSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesGenre = genreFilter === 'All' || m.genre === genreFilter
-    const matchesStatus = statusFilter === 'All' || m.status === statusFilter
-    return matchesSearch && matchesGenre && matchesStatus
+    if (!selectedCollectionId) {
+      return matchesSearch && matchesGenre && matchesStatus
+    }
+
+    const collection = collections.find((item) => item.id === selectedCollectionId)
+    const inCollection = collection?.movieIds.includes(movie.id) ?? false
+
+    return matchesSearch && matchesGenre && matchesStatus && inCollection
   })
 
   function handleAddMovie(movie: Movie) {
@@ -106,6 +114,54 @@ function App() {
     )
   }
 
+  const handleCreateCollection = (name: string) => {
+    const trimmedName = name.trim()
+    if (!trimmedName) {
+      return
+    }
+
+    setCollections((prevCollections) => [
+      ...prevCollections,
+      {
+        id: crypto.randomUUID(),
+        name: trimmedName,
+        movieIds: [],
+      },
+    ])
+  }
+
+  const handleAssignMovieToCollection = (collectionId: string, movieId: string) => {
+    setCollections((prevCollections) =>
+      prevCollections.map((collection) => {
+        if (collection.id !== collectionId) {
+          return collection
+        }
+
+        if (collection.movieIds.includes(movieId)) {
+          return collection
+        }
+
+        return {
+          ...collection,
+          movieIds: [...collection.movieIds, movieId],
+        }
+      })
+    )
+  }
+
+  const handleRemoveMovieFromCollection = (collectionId: string, movieId: string) => {
+    setCollections((prevCollections) =>
+      prevCollections.map((collection) =>
+        collection.id === collectionId
+          ? {
+              ...collection,
+              movieIds: collection.movieIds.filter((id) => id !== movieId),
+            }
+          : collection
+      )
+    )
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -145,6 +201,16 @@ function App() {
         )}
 
         <SummaryBar movies={movies} />
+
+        <CollectionManager
+          movies={movies}
+          collections={collections}
+          selectedCollectionId={selectedCollectionId}
+          onSelectCollection={setSelectedCollectionId}
+          onCreateCollection={handleCreateCollection}
+          onAssignMovieToCollection={handleAssignMovieToCollection}
+          onRemoveMovieFromCollection={handleRemoveMovieFromCollection}
+        />
 
         {movies.length === 0 ? (
           <p className="empty-state">
