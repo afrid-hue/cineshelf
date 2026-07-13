@@ -7,6 +7,7 @@ import StarRating from './StarRating'
 import CollectionManager from './CollectionManager'
 import StatusToggle from './StatusToggle'
 import ThemeToggle from './ThemeToggle'
+import ContinueWatchingRow from './ContinueWatchingRow'
 import './App.css'
 
 const STATUS_KEY = 'cineshelf-statuses'
@@ -209,6 +210,11 @@ function App() {
         )}
 
         <SummaryBar movies={movies} />
+
+        <ContinueWatchingRow
+          movies={movies}
+          onSelectMovie={setSelectedMovieId}
+        />
 
         <CollectionManager
           movies={movies}
