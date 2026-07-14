@@ -291,6 +291,9 @@ function App() {
                   </select>
                 </label>
               </div>
+              <p className="movie-count">
+                Showing {filteredMovies.length} of {movies.length} movies
+              </p>
               {filteredMovies.length > 0 ? (
                 <ul className="movie-list">
                   {filteredMovies.map((movie) => (
