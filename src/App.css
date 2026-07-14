@@ -566,6 +566,14 @@
   opacity: 0.6;
 }
 
+/* ---------- MOVIE COUNT ---------- */
+.movie-count {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--text);
+  text-align: center;
+}
+
 /* ---------- NO MOVIES MESSAGE ---------- */
 .no-movies-message {
   text-align: center;
